@@ -1,0 +1,52 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Development files
+check_models.py
+create_schema.py
+fix_schema.py
+implementation_plan.md
+product_requirements.md
+task.md
+6_October_AWSxCodingClub.docx.html
+table_ref.png
+templates/report.html
+
+# Images (optional - keep only header.jpg in static)
+images/

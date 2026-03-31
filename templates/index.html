@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #F2EDE4;
+            --dark: #1A1A1A;
+            --accent: #B34632;
+            --input-bg: #EBE4D8;
+            --border: #1A1A1A;
+            --text-muted: #6B665E;
+            --text-body: #3A3732;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 420px;
+            min-width: 420px;
+            padding: 28px 24px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: var(--bg);
+        }
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border); }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+        .brand-mark {
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .brand-mark span {
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .brand h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .brand-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        /* ── FORM ELEMENTS ── */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        input, textarea, select {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            background: var(--input-bg);
+            color: var(--dark);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent);
+        }
+        textarea { resize: vertical; min-height: 72px; }
+
+        /* ── CATEGORY TOGGLE ── */
+        .category-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .toggle-row {
+            display: flex;
+        }
+        .toggle-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-transform: uppercase;
+        }
+        .toggle-btn + .toggle-btn { border-left: none; }
+        .toggle-btn.active {
+            background: var(--dark);
+            color: var(--bg);
+        }
+        .toggle-btn:hover:not(.active) {
+            background: rgba(26,26,26,0.06);
+        }
+
+        /* ── BUTTONS ── */
+        .btn-generate {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 0;
+            background: var(--accent);
+            color: var(--bg);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+        .btn-generate:hover { opacity: 0.88; }
+        .btn-generate:disabled {
+            background: var(--text-muted);
+            cursor: wait;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0;
+            margin-top: 4px;
+        }
+        .btn-action {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            background: transparent;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-action + .btn-action { border-left: none; }
+        .btn-action:hover {
+            background: var(--dark);
+            color: var(--bg);
+        }
+
+        /* ── DIVIDER ── */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--dark);
+            margin-top: 4px;
+        }
+
+        /* ── COLLAPSIBLE SECTIONS ── */
+        .collapse-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 8px 0;
+            user-select: none;
+        }
+        .collapse-header .arrow {
+            font-size: 10px;
+            transition: transform 0.2s;
+            color: var(--text-muted);
+        }
+        .collapse-header.open .arrow { transform: rotate(90deg); }
+        .collapse-body {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .collapse-body.open { display: flex; }
+
+        /* ── PREVIEW PANEL ── */
+        .preview {
+            flex: 1;
+            background: var(--dark);
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+        }
+        .preview iframe {
+            width: 21cm;
+            height: 29.7cm;
+            background: white;
+            border: none;
+            box-shadow: 0 2px 40px rgba(0,0,0,0.4);
+            transform: scale(0.75);
+            transform-origin: top center;
+        }
+
+        /* ── HIDDEN ── */
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <!-- Brand -->
+    <div class="brand">
+        <div class="brand-mark"><span>R</span></div>
+        <h1>Report Generator</h1>
+    </div>
+    <div class="brand-sub">AI-Powered Event Reporting</div>
+
+    <!-- API Key -->
+    <div class="form-group">
+        <label>Groq API Key</label>
+        <input type="password" id="apiKey" placeholder="Enter API Key">
+    </div>
+
+    <!-- Event Category Toggle -->
+    <div class="category-group">
+        <label>Event Category</label>
+        <div class="toggle-row">
+            <button class="toggle-btn active" data-cat="technical" onclick="selectCategory(this)">Technical</button>
+            <button class="toggle-btn" data-cat="cultural" onclick="selectCategory(this)">Cultural</button>
+            <button class="toggle-btn" data-cat="sports" onclick="selectCategory(this)">Sports</button>
+        </div>
+        <input type="hidden" id="eventCategory" value="technical">
+    </div>
+
+    <!-- Event Description -->
+    <div class="form-group">
+        <label>Event Description</label>
+        <textarea id="eventDescription" placeholder="Describe the event in detail: name, date, organizers, flow, speakers, key highlights..." style="min-height: 110px;"></textarea>
+    </div>
+
+    <!-- Generate Button -->
+    <button class="btn-generate" id="genBtn" onclick="generateAll()">Generate Full Report</button>
+
+    <div class="divider"></div>
+
+    <!-- Editable Fields (collapsed by default) -->
+    <div class="collapse-header" onclick="toggleSection(this)">
+        <span class="section-label">Edit Generated Content</span>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="collapse-body" id="editFields">
+        <div class="form-group"><label>Event Name</label><input type="text" id="event_name"></div>
+        <div class="form-group"><label>Date</label><input type="text" id="event_date"></div>
+        <div class="form-group"><label>Duration</label><input type="text" id="event_duration"></div>
+        <div class="form-group"><label>Activity Type</label><input type="text" id="event_type"></div>
+        <div class="form-group"><label>Organized By</label><input type="text" id="organized_by"></div>
+        <div class="form-group"><label>Coordinators</label><textarea id="coordinators"></textarea></div>
+        <div class="form-group"><label>Introduction</label><textarea id="introduction"></textarea></div>
+        <div class="form-group"><label>Event Details</label><textarea id="details_of_the_event"></textarea></div>
+        <div class="form-group"><label>Event Description</label><textarea id="description_of_the_event"></textarea></div>
+        <div class="form-group"><label>Beneficiaries</label><input type="text" id="beneficiaries"></div>
+        <div class="form-group"><label>Session Overview</label><textarea id="session_overview"></textarea></div>
+        <div class="form-group"><label>Conclusion</label><textarea id="conclusion"></textarea></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Participants & Image -->
+    <div class="collapse-header" onclick="toggleSection(this)">
+        <span class="section-label">Attendance &amp; Media</span>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="collapse-body" id="mediaFields">
+        <div class="form-group">
+            <label>Participants List (CSV: ID, Name) — Optional</label>
+            <textarea id="participantsLog" placeholder="PCE23AD007, Anuj Sharma&#10;PCE23AD010, Aryan..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Event Image</label>
+            <input type="file" accept="image/*" onchange="encodeImageFileAsURL(this, 'image_placeholder')">
+            <input type="hidden" id="image_placeholder" value="images/image1.png">
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Action Buttons -->
+    <div class="actions">
+        <button class="btn-action" onclick="renderPreview()">Update Preview</button>
+        <button class="btn-action" onclick="printReport()">Print / PDF</button>
+        <button class="btn-action" onclick="exportToWord()">Export to Word</button>
+    </div>
+</div>
+
+<div class="preview">
+    <iframe id="reportFrame"></iframe>
+</div>
+
+<script>
+    let generatedHighlights = [];
+    let generatedOutcomes = {};
+
+    const getVal = (id) => document.getElementById(id).value;
+    const setVal = (id, val) => document.getElementById(id).value = val;
+
+    // ── Category Toggle ──
+    function selectCategory(btn) {
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        setVal('eventCategory', btn.dataset.cat);
+    }
+
+    // ── Collapse Sections ──
+    function toggleSection(header) {
+        header.classList.toggle('open');
+        const body = header.nextElementSibling;
+        body.classList.toggle('open');
+    }
+
+    // ── Generate ──
+    async function generateAll() {
+        const apiKey = getVal('apiKey');
+        const desc = getVal('eventDescription');
+        const btn = document.getElementById('genBtn');
+        
+        if (!apiKey) { alert('Please enter an API Key first.'); return; }
+        if (!desc) { alert('Please enter an event description.'); return; }
+
+        btn.disabled = true;
+        btn.innerText = 'GENERATING...';
+
+        try {
+            const res = await fetch('/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ api_key: apiKey, description: desc, event_category: getVal('eventCategory') })
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            
+            const fields = [
+                'event_name', 'event_date', 'event_duration', 'event_type', 
+                'organized_by', 'coordinators', 'introduction', 'details_of_the_event',
+                'description_of_the_event', 'beneficiaries', 'session_overview', 'conclusion'
+            ];
+            fields.forEach(f => {
+                if (data[f]) setVal(f, data[f]);
+            });
+
+            generatedHighlights = data.key_highlights || [];
+            generatedOutcomes = {
+                1: data.learning_outcome_1,
+                2: data.learning_outcome_2,
+                3: data.learning_outcome_3,
+                4: data.learning_outcome_4
+            };
+
+            await renderPreview();
+            
+        } catch (e) {
+            alert('Error: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'GENERATE FULL REPORT';
+        }
+    }
+
+    // ── Participants ──
+    function parseParticipants(text) {
+        if (!text.trim()) return [];
+        return text.split('\n')
+            .filter(line => line.includes(','))
+            .map(line => {
+                const [id, name] = line.split(',');
+                return { roll_no: id.trim(), name: name.trim() };
+            });
+    }
+
+    // ── Render ──
+    async function renderPreview() {
+        const data = {
+            event_name: getVal('event_name'),
+            event_date: getVal('event_date'),
+            event_duration: getVal('event_duration'),
+            event_type: getVal('event_type'),
+            organized_by: getVal('organized_by'),
+            coordinators: getVal('coordinators'),
+            introduction: getVal('introduction'),
+            details_of_the_event: getVal('details_of_the_event'),
+            description_of_the_event: getVal('description_of_the_event'),
+            beneficiaries: getVal('beneficiaries'),
+            session_overview: getVal('session_overview'),
+            conclusion: getVal('conclusion'),
+            key_highlights: generatedHighlights,
+            learning_outcome_1: generatedOutcomes[1],
+            learning_outcome_2: generatedOutcomes[2],
+            learning_outcome_3: generatedOutcomes[3],
+            learning_outcome_4: generatedOutcomes[4],
+            attendance: parseParticipants(getVal('participantsLog')),
+            image_placeholder: getVal('image_placeholder') || 'images/placeholder.png'
+        };
+
+        try {
+            const res = await fetch('/render', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const html = await res.text();
+            const iframe = document.getElementById('reportFrame');
+            iframe.contentWindow.document.open();
+            iframe.contentWindow.document.write(html);
+            iframe.contentWindow.document.close();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // ── Print ──
+    function printReport() {
+        const iframe = document.getElementById('reportFrame');
+        iframe.focus();
+        iframe.contentWindow.print();
+    }
+
+    // ── Export to Word ──
+    async function exportToWord() {
+        const data = {
+            event_name: getVal('event_name'),
+            event_date: getVal('event_date'),
+            event_duration: getVal('event_duration'),
+            event_type: getVal('event_type'),
+            organized_by: getVal('organized_by'),
+            coordinators: getVal('coordinators'),
+            introduction: getVal('introduction'),
+            details_of_the_event: getVal('details_of_the_event'),
+            description_of_the_event: getVal('description_of_the_event'),
+            beneficiaries: getVal('beneficiaries'),
+            session_overview: getVal('session_overview'),
+            conclusion: getVal('conclusion'),
+            key_highlights: generatedHighlights,
+            learning_outcome_1: generatedOutcomes[1],
+            learning_outcome_2: generatedOutcomes[2],
+            learning_outcome_3: generatedOutcomes[3],
+            learning_outcome_4: generatedOutcomes[4],
+            attendance: parseParticipants(getVal('participantsLog')),
+            image_placeholder: getVal('image_placeholder') || 'images/placeholder.png'
+        };
+
+        try {
+            const res = await fetch('/export-docx', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            
+            if (!res.ok) throw new Error('Export failed');
+            
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${data.event_name || 'Report'}.doc`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (e) {
+            alert('Error exporting to Word: ' + e.message);
+        }
+    }
+
+    // ── Image Encode ──
+    function encodeImageFileAsURL(element, targetId) {
+        var file = element.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            document.getElementById(targetId).value = reader.result;
+            renderPreview();
+        }
+        reader.readAsDataURL(file);
+    }
+</script>
+</body>
+</html>

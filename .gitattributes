@@ -1,0 +1,18 @@
+# Auto detect text files and normalize line endings to LF in repository
+* text=auto
+
+# Force LF for specific files
+*.py text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+
+# Force CRLF for Windows batch files
+*.bat text eol=crlf
+
+# Binary files
+*.jpg binary
+*.png binary
+*.gif binary
+*.ico binary
