@@ -4,12 +4,12 @@ A Flask-based web application that generates professional college event reports 
 
 ## Features
 
-- 🤖 AI-powered content generation with category-specific prompts (Technical, Cultural, Sports)
-- 📄 Professional report formatting with CO-PO mapping tables
-- 📊 Assessment/Feedback form generation
-- 📥 Export to Word (.doc) format for manual editing
-- 🖨️ Print to PDF functionality
-- 📱 Clean, minimalist UI with live preview
+- AI-powered content generation with category-specific prompts (Technical, Cultural, Sports)
+- Professional report formatting with CO-PO mapping tables
+- Assessment/Feedback form generation
+- Export to Word (.doc) format for manual editing
+- Print to PDF functionality
+- Clean, minimalist UI with live preview
 
 ## Tech Stack
 
@@ -22,7 +22,7 @@ A Flask-based web application that generates professional college event reports 
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/just-karrot/automated_report.git
 cd report_a3
 ```
 
