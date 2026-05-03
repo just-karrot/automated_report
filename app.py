@@ -38,7 +38,8 @@ def generate_full_report():
             system_prompt_base = (
                 "You are an expert academic project coordinator. "
                 "Define the metadata, detailed abstract, references, and 6 relevant technical chapter titles for a dissertation. "
-                "Tone: Formal and Academic. Format: JSON schema provided."
+                "Tone: Formal and Academic. Format: JSON schema provided. "
+                "You may use simple HTML for the abstract: <p> for paragraphs, <b> for bold, <i> for italics, and <ul>/<li> for lists if needed."
             )
             
             base_schema = {
@@ -88,7 +89,10 @@ def generate_full_report():
                     "You are a senior engineering student writing a highly detailed, professional project dissertation. "
                     "Write extensive, multi-paragraph content for the requested chapter. "
                     "Focus on technical depth, clear explanations, and academic rigor. "
-                    "Use valid HTML structure (like <br> or <b>) for formatting. No raw markdown. "
+                    "You are encouraged to use simple HTML to structure your content: "
+                    "Use <p> for paragraphs, <b> for bold, <i> for italics, <ul>/<li> for bulleted lists, "
+                    "and <table>/<tr>/<td> for data or comparisons. No raw markdown. "
+                    "Do NOT use multiple <br> tags to simulate page breaks; the system will handle pagination. "
                     "The report must feel long and comprehensive (equivalent to 3-4 pages per chapter)."
                 )
                 chap_prompt = f"Write the complete, extremely detailed, multi-paragraph content for {chapter_title} of the project: {result.get('title')}. Context: {description}"
@@ -186,6 +190,115 @@ from docx import Document
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.section import WD_SECTION
+from lxml import html
+
+def add_html_to_docx(html_content, doc_or_cell):
+    """Parses HTML and adds corresponding elements to a python-docx document or table cell."""
+    if not html_content:
+        return
+    
+    try:
+        # Wrap in a div to ensure a single root for lxml
+        tree = html.fromstring(f"<div>{html_content}</div>")
+    except Exception:
+        doc_or_cell.add_paragraph(html_content)
+        return
+
+    def process_element(element, parent_docx):
+        # Handle child nodes
+        for child in element.xpath('node()'):
+            if isinstance(child, html.HtmlElement):
+                tag = child.tag.lower()
+                
+                if tag == 'p':
+                    p = parent_docx.add_paragraph()
+                    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                    process_element(child, p)
+                
+                elif tag == 'br':
+                    # If parent is a paragraph, add a break
+                    if hasattr(parent_docx, 'add_run'):
+                        parent_docx.add_run().add_break()
+                    else:
+                        parent_docx.add_paragraph()
+                
+                elif tag in ['b', 'strong']:
+                    if hasattr(parent_docx, 'add_run'):
+                        run = parent_docx.add_run()
+                        run.bold = True
+                        # We need to process children of <b> to handle nested tags like <b><i>text</i></b>
+                        # But for simplicity, if it's just text:
+                        run.text = child.text if child.text else ""
+                        process_element(child, parent_docx)
+                    else:
+                        p = parent_docx.add_paragraph()
+                        run = p.add_run()
+                        run.bold = True
+                        run.text = child.text if child.text else ""
+                        process_element(child, p)
+
+                elif tag in ['i', 'em']:
+                    if hasattr(parent_docx, 'add_run'):
+                        run = parent_docx.add_run()
+                        run.italic = True
+                        run.text = child.text if child.text else ""
+                        process_element(child, parent_docx)
+                    else:
+                        p = parent_docx.add_paragraph()
+                        run = p.add_run()
+                        run.italic = True
+                        run.text = child.text if child.text else ""
+                        process_element(child, p)
+
+                elif tag == 'ul':
+                    for li in child.xpath('./li'):
+                        p = parent_docx.add_paragraph(style='List Bullet')
+                        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                        process_element(li, p)
+                
+                elif tag == 'ol':
+                    for li in child.xpath('./li'):
+                        p = parent_docx.add_paragraph(style='List Number')
+                        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                        process_element(li, p)
+
+                elif tag == 'table':
+                    rows = child.xpath('.//tr')
+                    if rows:
+                        # Find max columns
+                        max_cols = 0
+                        for row in rows:
+                            max_cols = max(max_cols, len(row.xpath('./td | ./th')))
+                        
+                        if max_cols > 0:
+                            table = parent_docx.add_table(rows=len(rows), cols=max_cols)
+                            table.style = 'Table Grid'
+                            for r_idx, row in enumerate(rows):
+                                for c_idx, cell in enumerate(row.xpath('./td | ./th')):
+                                    if c_idx < max_cols:
+                                        process_element(cell, table.cell(r_idx, c_idx))
+
+                elif tag in ['td', 'th', 'li']:
+                    # These are containers, just process their children
+                    process_element(child, parent_docx)
+                
+                else:
+                    # Unknown tag, just process children
+                    process_element(child, parent_docx)
+                    
+            elif isinstance(child, str):
+                # This is text content
+                text = str(child).strip()
+                if text:
+                    if hasattr(parent_docx, 'add_run'):
+                        # If the current parent is a paragraph, add text to it
+                        parent_docx.add_run(text)
+                    elif hasattr(parent_docx, 'add_paragraph'):
+                        # If the current parent is a Document or Cell, create a paragraph
+                        p = parent_docx.add_paragraph(text)
+                        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+    process_element(tree, doc_or_cell)
 
 @app.route('/export-docx', methods=['POST'])
 def export_docx():
@@ -268,9 +381,9 @@ def export_docx():
         doc.add_paragraph("Poornima College of Engineering").alignment = WD_ALIGN_PARAGRAPH.CENTER
         doc.add_paragraph("Jan-June, 2026").alignment = WD_ALIGN_PARAGRAPH.CENTER
         
-        doc.add_page_break()
+        doc.add_page_break() # Break after Cover Page
         
-        # --- CERTIFICATES (Simplified text versions) ---
+        # --- CERTIFICATES ---
         doc.add_heading('DEPARTMENT CERTIFICATE', level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
         cert_p = doc.add_paragraph("This is to certify that ")
         cert_p.add_run(data.get('certificate_students_text', '[Students]')).bold = True
@@ -278,14 +391,30 @@ def export_docx():
         cert_p.add_run(data.get('title', '[Title]')).bold = True
         cert_p.add_run(f" under the supervision of {data.get('professor_name')}, {data.get('professor_designation')}...")
         
-        doc.add_page_break()
+        doc.add_page_break() # Break after Dept Certificate
+        
+        doc.add_heading("CANDIDATE'S DECLARATION", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
+        doc.add_paragraph("We hereby declare that the work which is being presented in this project report...")
+        doc.add_page_break() # Break after Candidate Declaration
+        
+        doc.add_heading("SUPERVISOR'S CERTIFICATE", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
+        doc.add_paragraph("This is to certify that, to the best of my knowledge...")
+        doc.add_page_break() # Break after Supervisor Certificate
+        
+        doc.add_heading("ACKNOWLEDGEMENT", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
+        doc.add_paragraph("We would like to convey our profound sense of reverence...")
+        doc.add_page_break() # Break after Acknowledgement
+        
+        doc.add_heading("TABLE OF CONTENTS", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
+        doc.add_paragraph("Contents...")
+        doc.add_page_break() # Break after Table of Contents
         
         # --- ABSTRACT ---
         doc.add_heading(data.get('abstract_title', 'ABSTRACT'), level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
-        doc.add_paragraph(data.get('abstract_content', ''))
+        add_html_to_docx(data.get('abstract_content', ''), doc)
         doc.add_paragraph(f"Keywords: {data.get('keywords', '')}")
         
-        doc.add_page_break()
+        doc.add_page_break() # Break after Keywords (before chapters)
         
         # --- CHAPTERS ---
         for i in range(1, 7):
@@ -293,9 +422,7 @@ def export_docx():
             content = data.get(f'chapter_{i}_content', '')
             if title:
                 doc.add_heading(title, level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
-                # Simple HTML to text cleanup (removing common tags for docx)
-                clean_content = content.replace('<br>', '\n').replace('<b>', '').replace('</b>', '').replace('<p>', '').replace('</p>', '\n')
-                doc.add_paragraph(clean_content)
+                add_html_to_docx(content, doc)
                 doc.add_page_break()
                 
         # --- REFERENCES ---
@@ -353,8 +480,7 @@ def export_docx():
         
         for title, content in sections:
             doc.add_heading(title, level=2)
-            clean_content = str(content).replace('<br>', '\n').replace('<b>', '').replace('</b>', '')
-            doc.add_paragraph(clean_content)
+            add_html_to_docx(content, doc)
 
     # Save to buffer
     f = io.BytesIO()

@@ -5,6 +5,14 @@
     <style type="text/css">
         @import url(https://themes.googleusercontent.com/fonts/css?kit=fpjTOVmNbO4Lz34iLyptLTi9jKYd1gJzj5O2gWsEpXoyck2WCYPEMNySjZN0CHed_kmCvy597kDopqFAXvpeaA);
 
+        /* Custom Project Report Fixes */
+        .content-block {
+            text-align: justify;
+        }
+        h1.c22 {
+            page-break-before: always;
+        }
+
         ul.lst-kix_list_9-3 {
             list-style-type: none
         }
@@ -5101,6 +5109,7 @@
     <p class="c4"><span class="c1 c25">{{ students[0].name if students|length > 0 else "Student Name" }},</span><span class="c1">&nbsp;Department of</span><span class="c3">&nbsp;</span><span class="c13 c1">Advanced Computing, {{ students[0].roll_no if students|length > 0 else "[Roll number]" }}</span></span></p>
     <p class="c4"><span class="c1 c25">{{ students[1].name if students|length > 1 else "Student Name" }},</span><span class="c1">&nbsp;Department of</span><span class="c3">&nbsp;</span><span class="c13 c1">Advanced Computing, {{ students[1].roll_no if students|length > 1 else "[Roll number]" }}</span></span></p>
     <p class="c4"><span class="c1 c25">{{ students[2].name if students|length > 2 else "Student Name" }},</span><span class="c1">&nbsp;Department of</span><span class="c3">&nbsp;</span><span class="c13 c1">Advanced Computing, {{ students[2].roll_no if students|length > 2 else "[Roll number]" }}</span></span></p>
+    <hr style="page-break-before:always;display:none;">
     <p class="c4 c11"><span class="c13 c1"></span></p>
     <p class="c55 c11"><span class="c13 c1"></span></p>
     <p class="c55 c11"><span class="c13 c1"></span></p>
@@ -5218,11 +5227,7 @@
     <h1 class="c47" id="h.cqt7l8d4mhnj"><span class="c17 c1"></span></h1>
     <h1 class="c62" id="h.1n7trmp3zew5"><span class="c3 c18">{{ abstract_title }}</span></h1>
     <div class="content-block">{{ abstract_content | safe }}</div>
-    <div style="page-break-after: always;"></div>
-    <p class="c15 c11"><span class="c40 c1 c51"></span></p>
-    <p class="c29"><span class="c1 c39">Keywords: </span><span>&nbsp;{{ keywords }}</span>
-        <hr style="page-break-before:always;display:none;">
-    </p>
+    <p class="c29" style="margin-top: 15pt;"><span class="c1 c39">Keywords: </span><span>&nbsp;{{ keywords }}</span></p>
     <h1 class="c22" id="h.sjvm7ny0knwl"><span class="c13 c1">{{ chapter_1_title }}</span></h1>
     <div class="content-block">{{ chapter_1_content | safe }}</div>
     <div style="page-break-after: always;"></div>

@@ -33,7 +33,12 @@ wheels/
 *.swo
 *~
 .kiro/
+
+# Gemini
+compressed_working.md
+working3.md
 GEMINI.md
+detailed_context.md
 
 # OS
 .DS_Store
@@ -51,6 +56,8 @@ table_ref.png
 templates/report.html
 bugs.md
 Procfile
+Sample-Report-APS-Project.docx.html
+
 
 # Images (optional - keep only header.jpg in static)
 

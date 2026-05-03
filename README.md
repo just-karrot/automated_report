@@ -1,21 +1,24 @@
-# AI-Powered Event Report Generator
+# AI-Powered Report Automation Suite
 
-A Flask-based web application that generates professional college event reports using AI (Groq API).
+A Flask-based web application that generates professional reports using AI (Groq API). Supports multiple formats including Event Reports and high-depth Project Reports.
 
 ## Features
 
-- AI-powered content generation with category-specific prompts (Technical, Cultural, Sports)
-- Professional report formatting with CO-PO mapping tables
-- Assessment/Feedback form generation
-- Export to Word (.doc) format for manual editing
-- Print to PDF functionality
-- Clean, minimalist UI with live preview
+- **Multi-Format Support**: Generate Event Reports, Subject Reports, and detailed Project Reports.
+- **High-Depth Generation**: Uses parallel multi-pass AI generation (1 metadata pass + 6 content chapters) to produce 20+ page Project Reports.
+- **Parallel Processing**: Utilizes `concurrent.futures` for simultaneous chapter generation.
+- **Professional Formatting**: Replicates specific institutional formatting styles (Times New Roman, specific alignments, bolding).
+- **Reliable Export**: High-fidelity export to Microsoft Word (.docx) using `python-docx` with proper layout preservation.
+- **Brutalist UI**: Modern, responsive UI with a distinct brutalist aesthetic (sidebar navigation, sharp corners).
+- **Print to PDF**: Built-in support for browser-based PDF printing.
 
 ## Tech Stack
 
 - **Backend**: Flask (Python)
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **AI**: Groq API (openai/gpt-oss-120b model)
+- **Frontend**: HTML5, CSS3 (Vanilla), Vanilla JavaScript
+- **AI**: Groq API (`openai/gpt-oss-120b`)
+- **Export**: `python-docx`
+- **Concurrency**: `concurrent.futures.ThreadPoolExecutor`
 - **Templating**: Jinja2
 
 ## Installation
@@ -42,36 +45,20 @@ GROQ_API_KEY=your_groq_api_key_here
 python app.py
 ```
 
-5. Open your browser and navigate to:
-```
-http://127.0.0.1:5000
-```
-
-## Usage
-
-1. **Enter API Key**: Input your Groq API key (or set it in .env)
-2. **Select Category**: Choose event type (Technical/Cultural/Sports)
-3. **Describe Event**: Provide event details in the description field
-4. **Generate**: Click "Generate Full Report" to create AI-powered content
-5. **Edit**: Modify generated content in the collapsible sections
-6. **Preview**: Click "Update Preview" to see the formatted report
-7. **Export**: Use "Export to Word" or "Print / PDF" buttons
-
 ## Project Structure
 
 ```
 report_a3/
-├── app.py                 # Main Flask application
-├── requirements.txt       # Python dependencies
-├── .env                   # Environment variables (not in git)
-├── .gitignore            # Git ignore rules
+├── app.py                 # Main Flask application with multi-pass logic
+├── requirements.txt       # Python dependencies (includes python-docx)
 ├── static/
-│   └── images/
-│       └── header.jpg    # College header image
+│   └── images/            # Assets (header.jpg, pce_logo.jpg)
 ├── templates/
-│   ├── index.html        # Main UI
-│   └── schema.html       # Report template
-└── README.md             # This file
+│   ├── index.html         # Responsive UI with format toggles
+│   ├── schema.html        # Event Report template
+│   ├── project_schema.html # Project Report template
+│   └── subject_schema.html # Subject Report template
+└── README.md              # This file
 ```
 
 ## Configuration
