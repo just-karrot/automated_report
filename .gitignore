@@ -32,6 +32,8 @@ wheels/
 *.swp
 *.swo
 *~
+.kiro/
+GEMINI.md
 
 # OS
 .DS_Store
@@ -47,6 +49,8 @@ task.md
 6_October_AWSxCodingClub.docx.html
 table_ref.png
 templates/report.html
+bugs.md
+Procfile
 
 # Images (optional - keep only header.jpg in static)
 

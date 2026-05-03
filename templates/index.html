@@ -30,17 +30,20 @@
         /* ── SIDEBAR ── */
         .sidebar {
             width: 420px;
-            min-width: 420px;
+            min-width: 320px;
+            max-width: 85vw;
             padding: 28px 24px;
             overflow-y: auto;
+            overflow-x: auto;
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             gap: 16px;
             background: var(--bg);
+            resize: horizontal;
         }
 
-        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar { width: 4px; height: 4px; }
         .sidebar::-webkit-scrollbar-track { background: transparent; }
         .sidebar::-webkit-scrollbar-thumb { background: var(--border); }
 
@@ -246,6 +249,38 @@
             transform-origin: top center;
         }
 
+        /* ── MOBILE RESPONSIVE ── */
+        @media (max-width: 850px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                overflow-y: auto;
+            }
+            .sidebar {
+                width: 100% !important;
+                min-width: 100%;
+                max-width: 100%;
+                height: auto;
+                resize: none;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 20px 16px;
+                overflow-x: hidden;
+            }
+            .preview {
+                padding: 12px;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+            .preview iframe {
+                transform: scale(0.45);
+                transform-origin: top center;
+                max-width: 100%;
+            }
+            .brand h1 { font-size: 16px; }
+            .toggle-btn { font-size: 10px; }
+        }
+
         /* ── HIDDEN ── */
         .hidden { display: none; }
     </style>
@@ -266,21 +301,45 @@
         <input type="password" id="apiKey" placeholder="Enter API Key">
     </div>
 
-    <!-- Event Category Toggle -->
+    <!-- Report Format Toggle -->
     <div class="category-group">
-        <label>Event Category</label>
+        <label>Report Format</label>
         <div class="toggle-row">
-            <button class="toggle-btn active" data-cat="technical" onclick="selectCategory(this)">Technical</button>
-            <button class="toggle-btn" data-cat="cultural" onclick="selectCategory(this)">Cultural</button>
-            <button class="toggle-btn" data-cat="sports" onclick="selectCategory(this)">Sports</button>
+            <button class="toggle-btn active" data-format="event_report" onclick="selectFormat(this)">Event Report</button>
+            <button class="toggle-btn" data-format="project_report" onclick="selectFormat(this)">Project Report</button>
         </div>
-        <input type="hidden" id="eventCategory" value="technical">
+        <input type="hidden" id="reportFormat" value="event_report">
     </div>
 
-    <!-- Event Description -->
-    <div class="form-group">
-        <label>Event Description</label>
-        <textarea id="eventDescription" placeholder="Describe the event in detail: name, date, organizers, flow, speakers, key highlights..." style="min-height: 110px;"></textarea>
+    <!-- Event Specific Inputs -->
+    <div id="eventInputs">
+        <!-- Event Category Toggle -->
+        <div class="category-group">
+            <label>Event Category</label>
+            <div class="toggle-row">
+                <button class="toggle-btn active" data-cat="technical" onclick="selectCategory(this)">Technical</button>
+                <button class="toggle-btn" data-cat="cultural" onclick="selectCategory(this)">Cultural</button>
+                <button class="toggle-btn" data-cat="sports" onclick="selectCategory(this)">Sports</button>
+            </div>
+            <input type="hidden" id="eventCategory" value="technical">
+        </div>
+
+        <div class="form-group">
+            <label>Event Description</label>
+            <textarea id="eventDescription" placeholder="Describe the event in detail: name, date, organizers, flow, speakers, key highlights..." style="min-height: 110px;"></textarea>
+        </div>
+    </div>
+
+    <!-- Project Specific Inputs -->
+    <div id="projectInputs" class="hidden">
+        <div class="form-group">
+            <label>Project Description</label>
+            <textarea id="projectDescription" placeholder="Describe your project: title, objectives, methodology, system design, results..." style="min-height: 140px;"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Student Details (CSV: Name, RegNo, RollNo)</label>
+            <textarea id="studentDetails" placeholder="Student A, PCE22CA001, 101&#10;Student B, PCE22CA002, 102"></textarea>
+        </div>
     </div>
 
     <!-- Generate Button -->
@@ -293,19 +352,48 @@
         <span class="section-label">Edit Generated Content</span>
         <span class="arrow">▶</span>
     </div>
-    <div class="collapse-body" id="editFields">
-        <div class="form-group"><label>Event Name</label><input type="text" id="event_name"></div>
-        <div class="form-group"><label>Date</label><input type="text" id="event_date"></div>
-        <div class="form-group"><label>Duration</label><input type="text" id="event_duration"></div>
-        <div class="form-group"><label>Activity Type</label><input type="text" id="event_type"></div>
-        <div class="form-group"><label>Organized By</label><input type="text" id="organized_by"></div>
-        <div class="form-group"><label>Coordinators</label><textarea id="coordinators"></textarea></div>
-        <div class="form-group"><label>Introduction</label><textarea id="introduction"></textarea></div>
-        <div class="form-group"><label>Event Details</label><textarea id="details_of_the_event"></textarea></div>
-        <div class="form-group"><label>Event Description</label><textarea id="description_of_the_event"></textarea></div>
-        <div class="form-group"><label>Beneficiaries</label><input type="text" id="beneficiaries"></div>
-        <div class="form-group"><label>Session Overview</label><textarea id="session_overview"></textarea></div>
-        <div class="form-group"><label>Conclusion</label><textarea id="conclusion"></textarea></div>
+    <div class="collapse-body">
+        <!-- Event Edit Fields -->
+        <div id="eventEditFields">
+            <div class="form-group"><label>Event Name</label><input type="text" id="event_name"></div>
+            <div class="form-group"><label>Date</label><input type="text" id="event_date"></div>
+            <div class="form-group"><label>Duration</label><input type="text" id="event_duration"></div>
+            <div class="form-group"><label>Activity Type</label><input type="text" id="event_type"></div>
+            <div class="form-group"><label>Organized By</label><input type="text" id="organized_by"></div>
+            <div class="form-group"><label>Coordinators</label><textarea id="coordinators"></textarea></div>
+            <div class="form-group"><label>Introduction</label><textarea id="introduction"></textarea></div>
+            <div class="form-group"><label>Event Details</label><textarea id="details_of_the_event"></textarea></div>
+            <div class="form-group"><label>Event Description</label><textarea id="description_of_the_event"></textarea></div>
+            <div class="form-group"><label>Beneficiaries</label><input type="text" id="beneficiaries"></div>
+            <div class="form-group"><label>Session Overview</label><textarea id="session_overview"></textarea></div>
+            <div class="form-group"><label>Conclusion</label><textarea id="conclusion"></textarea></div>
+        </div>
+
+        <!-- Project Edit Fields -->
+        <div id="projectEditFields" class="hidden">
+            <div class="form-group"><label>Project Title</label><input type="text" id="proj_title"></div>
+            <div class="form-group"><label>Project Type</label><input type="text" id="proj_type"></div>
+            <div class="form-group"><label>Branch</label><input type="text" id="proj_branch"></div>
+            <div class="form-group"><label>Session</label><input type="text" id="proj_session"></div>
+            <div class="form-group"><label>Supervisor Name</label><input type="text" id="proj_prof"></div>
+            <div class="form-group"><label>Supervisor Designation</label><input type="text" id="proj_desig"></div>
+            <div class="form-group"><label>Abstract Title</label><input type="text" id="proj_abs_title"></div>
+            <div class="form-group"><label>Abstract Content</label><textarea id="proj_abs_content"></textarea></div>
+            <div class="form-group"><label>Keywords</label><input type="text" id="proj_keywords"></div>
+            <div class="form-group"><label>Chapter 1 Title</label><input type="text" id="ch1_title"></div>
+            <div class="form-group"><label>Chapter 1 Content</label><textarea id="ch1_content"></textarea></div>
+            <div class="form-group"><label>Chapter 2 Title</label><input type="text" id="ch2_title"></div>
+            <div class="form-group"><label>Chapter 2 Content</label><textarea id="ch2_content"></textarea></div>
+            <div class="form-group"><label>Chapter 3 Title</label><input type="text" id="ch3_title"></div>
+            <div class="form-group"><label>Chapter 3 Content</label><textarea id="ch3_content"></textarea></div>
+            <div class="form-group"><label>Chapter 4 Title</label><input type="text" id="ch4_title"></div>
+            <div class="form-group"><label>Chapter 4 Content</label><textarea id="ch4_content"></textarea></div>
+            <div class="form-group"><label>Chapter 5 Title</label><input type="text" id="ch5_title"></div>
+            <div class="form-group"><label>Chapter 5 Content</label><textarea id="ch5_content"></textarea></div>
+            <div class="form-group"><label>Chapter 6 Title</label><input type="text" id="ch6_title"></div>
+            <div class="form-group"><label>Chapter 6 Content</label><textarea id="ch6_content"></textarea></div>
+            <div class="form-group"><label>References (one per line)</label><textarea id="proj_refs" placeholder="[1] Author Name, Title..."></textarea></div>
+        </div>
     </div>
 
     <div class="divider"></div>
@@ -316,14 +404,19 @@
         <span class="arrow">▶</span>
     </div>
     <div class="collapse-body" id="mediaFields">
-        <div class="form-group">
-            <label>Participants List (CSV: ID, Name) — Optional</label>
-            <textarea id="participantsLog" placeholder="PCE23AD007, Anuj Sharma&#10;PCE23AD010, Aryan..."></textarea>
+        <div id="eventAttendance">
+            <div class="form-group">
+                <label>Participants List (CSV: ID, Name) — Optional</label>
+                <textarea id="participantsLog" placeholder="PCE23AD007, Anuj Sharma&#10;PCE23AD010, Aryan..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Event Image</label>
+                <input type="file" accept="image/*" onchange="encodeImageFileAsURL(this, 'image_placeholder')">
+                <input type="hidden" id="image_placeholder" value="images/image1.png">
+            </div>
         </div>
-        <div class="form-group">
-            <label>Event Image</label>
-            <input type="file" accept="image/*" onchange="encodeImageFileAsURL(this, 'image_placeholder')">
-            <input type="hidden" id="image_placeholder" value="images/image1.png">
+        <div id="projectPlaceholder" class="hidden">
+            <p style="font-size: 11px; color: var(--text-muted);">Media management for projects (e.g. figure uploads) coming soon.</p>
         </div>
     </div>
 
@@ -342,15 +435,38 @@
 </div>
 
 <script>
-    let generatedHighlights = [];
-    let generatedOutcomes = {};
+    let generatedData = {};
 
     const getVal = (id) => document.getElementById(id).value;
     const setVal = (id, val) => document.getElementById(id).value = val;
 
+    // ── Format Toggle ──
+    function selectFormat(btn) {
+        document.querySelectorAll('[data-format]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const format = btn.dataset.format;
+        setVal('reportFormat', format);
+
+        // Toggle UI Visibility
+        document.getElementById('eventInputs').classList.toggle('hidden', format !== 'event_report');
+        document.getElementById('projectInputs').classList.toggle('hidden', format !== 'project_report');
+        
+        // Fields inside collapsed sections
+        document.getElementById('eventEditFields').classList.toggle('hidden', format !== 'event_report');
+        document.getElementById('projectEditFields').classList.toggle('hidden', format !== 'project_report');
+        document.getElementById('eventAttendance').classList.toggle('hidden', format !== 'event_report');
+        document.getElementById('projectPlaceholder').classList.toggle('hidden', format !== 'project_report');
+        
+        // Clear preview on format switch
+        const iframe = document.getElementById('reportFrame');
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write('');
+        iframe.contentWindow.document.close();
+    }
+
     // ── Category Toggle ──
     function selectCategory(btn) {
-        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         setVal('eventCategory', btn.dataset.cat);
     }
@@ -359,17 +475,20 @@
     function toggleSection(header) {
         header.classList.toggle('open');
         const body = header.nextElementSibling;
-        body.classList.toggle('open');
+        if (body.classList.contains('collapse-body')) {
+            body.classList.toggle('open');
+        }
     }
 
     // ── Generate ──
     async function generateAll() {
         const apiKey = getVal('apiKey');
-        const desc = getVal('eventDescription');
+        const format = getVal('reportFormat');
+        const desc = format === 'event_report' ? getVal('eventDescription') : getVal('projectDescription');
         const btn = document.getElementById('genBtn');
         
         if (!apiKey) { alert('Please enter an API Key first.'); return; }
-        if (!desc) { alert('Please enter an event description.'); return; }
+        if (!desc) { alert('Please enter a description.'); return; }
 
         btn.disabled = true;
         btn.innerText = 'GENERATING...';
@@ -378,27 +497,53 @@
             const res = await fetch('/generate', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ api_key: apiKey, description: desc, event_category: getVal('eventCategory') })
+                body: JSON.stringify({ 
+                    api_key: apiKey, 
+                    description: desc, 
+                    event_category: getVal('eventCategory'),
+                    report_format: format
+                })
             });
             const data = await res.json();
             if (data.error) throw new Error(data.error);
             
-            const fields = [
-                'event_name', 'event_date', 'event_duration', 'event_type', 
-                'organized_by', 'coordinators', 'introduction', 'details_of_the_event',
-                'description_of_the_event', 'beneficiaries', 'session_overview', 'conclusion'
-            ];
-            fields.forEach(f => {
-                if (data[f]) setVal(f, data[f]);
-            });
+            generatedData = data;
 
-            generatedHighlights = data.key_highlights || [];
-            generatedOutcomes = {
-                1: data.learning_outcome_1,
-                2: data.learning_outcome_2,
-                3: data.learning_outcome_3,
-                4: data.learning_outcome_4
-            };
+            if (format === 'event_report') {
+                const fields = [
+                    'event_name', 'event_date', 'event_duration', 'event_type', 
+                    'organized_by', 'coordinators', 'introduction', 'details_of_the_event',
+                    'description_of_the_event', 'beneficiaries', 'session_overview', 'conclusion'
+                ];
+                fields.forEach(f => { if (data[f]) setVal(f, data[f]); });
+            } else {
+                setVal('proj_title', data.title);
+                setVal('proj_type', data.project_type);
+                setVal('proj_branch', data.branch);
+                setVal('proj_session', data.session);
+                setVal('proj_prof', data.professor_name);
+                setVal('proj_desig', data.professor_designation);
+                setVal('proj_abs_title', data.abstract_title);
+                setVal('proj_abs_content', data.abstract_content);
+                setVal('proj_keywords', data.keywords);
+                setVal('ch1_title', data.chapter_1_title);
+                setVal('ch1_content', data.chapter_1_content);
+                setVal('ch2_title', data.chapter_2_title);
+                setVal('ch2_content', data.chapter_2_content);
+                setVal('ch3_title', data.chapter_3_title);
+                setVal('ch3_content', data.chapter_3_content);
+                setVal('ch4_title', data.chapter_4_title);
+                setVal('ch4_content', data.chapter_4_content);
+                setVal('ch5_title', data.chapter_5_title);
+                setVal('ch5_content', data.chapter_5_content);
+                setVal('ch6_title', data.chapter_6_title);
+                setVal('ch6_content', data.chapter_6_content);
+                setVal('proj_refs', (data.references || []).join('\n'));
+                
+                // Update student textarea for reference
+                const studentsCSV = data.students.map(s => `${s.name}, ${s.reg_no}, ${s.roll_no}`).join('\n');
+                setVal('studentDetails', studentsCSV);
+            }
 
             await renderPreview();
             
@@ -410,40 +555,75 @@
         }
     }
 
-    // ── Participants ──
-    function parseParticipants(text) {
+    // ── Parsing ──
+    function parseCSV(text) {
         if (!text.trim()) return [];
         return text.split('\n')
             .filter(line => line.includes(','))
             .map(line => {
-                const [id, name] = line.split(',');
-                return { roll_no: id.trim(), name: name.trim() };
+                const parts = line.split(',').map(p => p.trim());
+                if (parts.length === 3) {
+                    return { name: parts[0], reg_no: parts[1], roll_no: parts[2] };
+                }
+                return { roll_no: parts[0], name: parts[1] }; // Fallback for old 2-col format
             });
     }
 
     // ── Render ──
     async function renderPreview() {
-        const data = {
-            event_name: getVal('event_name'),
-            event_date: getVal('event_date'),
-            event_duration: getVal('event_duration'),
-            event_type: getVal('event_type'),
-            organized_by: getVal('organized_by'),
-            coordinators: getVal('coordinators'),
-            introduction: getVal('introduction'),
-            details_of_the_event: getVal('details_of_the_event'),
-            description_of_the_event: getVal('description_of_the_event'),
-            beneficiaries: getVal('beneficiaries'),
-            session_overview: getVal('session_overview'),
-            conclusion: getVal('conclusion'),
-            key_highlights: generatedHighlights,
-            learning_outcome_1: generatedOutcomes[1],
-            learning_outcome_2: generatedOutcomes[2],
-            learning_outcome_3: generatedOutcomes[3],
-            learning_outcome_4: generatedOutcomes[4],
-            attendance: parseParticipants(getVal('participantsLog')),
-            image_placeholder: getVal('image_placeholder') || 'images/placeholder.png'
-        };
+        const format = getVal('reportFormat');
+        let data = { report_format: format };
+
+        if (format === 'event_report') {
+            Object.assign(data, {
+                event_name: getVal('event_name'),
+                event_date: getVal('event_date'),
+                event_duration: getVal('event_duration'),
+                event_type: getVal('event_type'),
+                organized_by: getVal('organized_by'),
+                coordinators: getVal('coordinators'),
+                introduction: getVal('introduction'),
+                details_of_the_event: getVal('details_of_the_event'),
+                description_of_the_event: getVal('description_of_the_event'),
+                beneficiaries: getVal('beneficiaries'),
+                session_overview: getVal('session_overview'),
+                conclusion: getVal('conclusion'),
+                key_highlights: generatedData.key_highlights || [],
+                learning_outcome_1: generatedData.learning_outcome_1,
+                learning_outcome_2: generatedData.learning_outcome_2,
+                learning_outcome_3: generatedData.learning_outcome_3,
+                learning_outcome_4: generatedData.learning_outcome_4,
+                attendance: parseCSV(getVal('participantsLog')),
+                image_placeholder: getVal('image_placeholder') || 'images/placeholder.png'
+            });
+        } else {
+            Object.assign(data, {
+                title: getVal('proj_title'),
+                project_type: getVal('proj_type'),
+                branch: getVal('proj_branch'),
+                session: getVal('proj_session'),
+                professor_name: getVal('proj_prof'),
+                professor_designation: getVal('proj_desig'),
+                abstract_title: getVal('proj_abs_title'),
+                abstract_content: getVal('proj_abs_content'),
+                keywords: getVal('proj_keywords'),
+                chapter_1_title: getVal('ch1_title'),
+                chapter_1_content: getVal('ch1_content'),
+                chapter_2_title: getVal('ch2_title'),
+                chapter_2_content: getVal('ch2_content'),
+                chapter_3_title: getVal('ch3_title'),
+                chapter_3_content: getVal('ch3_content'),
+                chapter_4_title: getVal('ch4_title'),
+                chapter_4_content: getVal('ch4_content'),
+                chapter_5_title: getVal('ch5_title'),
+                chapter_5_content: getVal('ch5_content'),
+                chapter_6_title: getVal('ch6_title'),
+                chapter_6_content: getVal('ch6_content'),
+                references: getVal('proj_refs').split('\n').filter(r => r.trim()),
+                students: parseCSV(getVal('studentDetails')),
+                certificate_students_text: generatedData.certificate_students_text
+            });
+        }
 
         try {
             const res = await fetch('/render', {
@@ -470,27 +650,60 @@
 
     // ── Export to Word ──
     async function exportToWord() {
-        const data = {
-            event_name: getVal('event_name'),
-            event_date: getVal('event_date'),
-            event_duration: getVal('event_duration'),
-            event_type: getVal('event_type'),
-            organized_by: getVal('organized_by'),
-            coordinators: getVal('coordinators'),
-            introduction: getVal('introduction'),
-            details_of_the_event: getVal('details_of_the_event'),
-            description_of_the_event: getVal('description_of_the_event'),
-            beneficiaries: getVal('beneficiaries'),
-            session_overview: getVal('session_overview'),
-            conclusion: getVal('conclusion'),
-            key_highlights: generatedHighlights,
-            learning_outcome_1: generatedOutcomes[1],
-            learning_outcome_2: generatedOutcomes[2],
-            learning_outcome_3: generatedOutcomes[3],
-            learning_outcome_4: generatedOutcomes[4],
-            attendance: parseParticipants(getVal('participantsLog')),
-            image_placeholder: getVal('image_placeholder') || 'images/placeholder.png'
-        };
+        const format = getVal('reportFormat');
+        let data = { report_format: format };
+
+        // Duplicate logic for data gathering (could be refactored)
+        if (format === 'event_report') {
+            Object.assign(data, {
+                event_name: getVal('event_name'),
+                event_date: getVal('event_date'),
+                event_duration: getVal('event_duration'),
+                event_type: getVal('event_type'),
+                organized_by: getVal('organized_by'),
+                coordinators: getVal('coordinators'),
+                introduction: getVal('introduction'),
+                details_of_the_event: getVal('details_of_the_event'),
+                description_of_the_event: getVal('description_of_the_event'),
+                beneficiaries: getVal('beneficiaries'),
+                session_overview: getVal('session_overview'),
+                conclusion: getVal('conclusion'),
+                key_highlights: generatedData.key_highlights || [],
+                learning_outcome_1: generatedData.learning_outcome_1,
+                learning_outcome_2: generatedData.learning_outcome_2,
+                learning_outcome_3: generatedData.learning_outcome_3,
+                learning_outcome_4: generatedData.learning_outcome_4,
+                attendance: parseCSV(getVal('participantsLog')),
+                image_placeholder: getVal('image_placeholder') || 'images/placeholder.png'
+            });
+        } else {
+            Object.assign(data, {
+                title: getVal('proj_title'),
+                project_type: getVal('proj_type'),
+                branch: getVal('proj_branch'),
+                session: getVal('proj_session'),
+                professor_name: getVal('proj_prof'),
+                professor_designation: getVal('proj_desig'),
+                abstract_title: getVal('proj_abs_title'),
+                abstract_content: getVal('proj_abs_content'),
+                keywords: getVal('proj_keywords'),
+                chapter_1_title: getVal('ch1_title'),
+                chapter_1_content: getVal('ch1_content'),
+                chapter_2_title: getVal('ch2_title'),
+                chapter_2_content: getVal('ch2_content'),
+                chapter_3_title: getVal('ch3_title'),
+                chapter_3_content: getVal('ch3_content'),
+                chapter_4_title: getVal('ch4_title'),
+                chapter_4_content: getVal('ch4_content'),
+                chapter_5_title: getVal('ch5_title'),
+                chapter_5_content: getVal('ch5_content'),
+                chapter_6_title: getVal('ch6_title'),
+                chapter_6_content: getVal('ch6_content'),
+                references: getVal('proj_refs').split('\n').filter(r => r.trim()),
+                students: parseCSV(getVal('studentDetails')),
+                certificate_students_text: generatedData.certificate_students_text
+            });
+        }
 
         try {
             const res = await fetch('/export-docx', {
@@ -505,7 +718,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${data.event_name || 'Report'}.doc`;
+            a.download = `${(format === 'event_report' ? data.event_name : data.title) || 'Report'}.doc`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
