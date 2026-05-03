@@ -644,8 +644,27 @@
     // ── Print ──
     function printReport() {
         const iframe = document.getElementById('reportFrame');
-        iframe.focus();
-        iframe.contentWindow.print();
+        const htmlContent = iframe.contentWindow.document.documentElement.outerHTML;
+        
+        // Open in new tab to prevent iframe PDF corruption (0B file bug)
+        const printWindow = window.open('', '_blank');
+        
+        if (!printWindow) {
+            alert('Popup blocked! Please allow popups for this site, or we will try printing directly from the preview.');
+            iframe.focus();
+            iframe.contentWindow.print();
+            return;
+        }
+
+        printWindow.document.open();
+        printWindow.document.write('<!DOCTYPE html>\n' + htmlContent);
+        printWindow.document.close();
+        
+        // Wait for fonts/images to load then print
+        printWindow.setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+        }, 500);
     }
 
     // ── Export to Word ──
@@ -718,7 +737,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${(format === 'event_report' ? data.event_name : data.title) || 'Report'}.doc`;
+            a.download = `${(format === 'event_report' ? data.event_name : data.title) || 'Report'}.docx`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);

@@ -3,7 +3,7 @@ import io
 import base64
 import json
 import concurrent.futures
-from flask import Flask, render_template, request, jsonify, Response
+from flask import Flask, render_template, request, jsonify, Response, send_file
 from dotenv import load_dotenv
 from groq import Groq
 
@@ -491,12 +491,11 @@ def export_docx():
     safe_name = "".join(c for c in report_name if c.isalnum() or c in (' ', '-', '_')).strip()
     filename = f"{safe_name or 'Report'}.docx"
 
-    return Response(
-        f.read(),
-        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        headers={
-            'Content-Disposition': f'attachment; filename="{filename}"'
-        }
+    return send_file(
+        f,
+        as_attachment=True,
+        download_name=filename,
+        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
 
 if __name__ == '__main__':
