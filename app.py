@@ -311,6 +311,18 @@ def export_docx():
     font = style.font
     font.name = 'Times New Roman'
     font.size = Pt(12)
+    
+    # Heading Styles to Black
+    for style_name in ['Heading 1', 'Heading 2']:
+        h_style = doc.styles[style_name]
+        h_font = h_style.font
+        h_font.name = 'Times New Roman'
+        h_font.color.rgb = RGBColor(0, 0, 0)
+        h_font.bold = True
+        if style_name == 'Heading 1':
+            h_font.size = Pt(16)
+        else:
+            h_font.size = Pt(14)
 
     if report_format == 'project_report':
         report_name = data.get('title', 'Project_Report')
@@ -321,8 +333,6 @@ def export_docx():
         run = title_p.add_run(data.get('title', '[TITLE]').upper())
         run.bold = True
         run.font.size = Pt(16)
-        
-        doc.add_paragraph() # Spacer
         
         type_p = doc.add_paragraph()
         type_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -348,7 +358,6 @@ def export_docx():
         run.bold = True
         run.font.size = Pt(14)
         
-        doc.add_paragraph()
         by_p = doc.add_paragraph()
         by_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         by_p.add_run("by")
@@ -359,27 +368,28 @@ def export_docx():
             run = sp.add_run(f"{student.get('name')}, Reg No: {student.get('reg_no')}")
             run.bold = True
             
-        doc.add_paragraph()
-        doc.add_paragraph("Under the guidance of").alignment = WD_ALIGN_PARAGRAPH.CENTER
+        guide_p = doc.add_paragraph("Under the guidance of")
+        guide_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         
         prof_p = doc.add_paragraph()
         prof_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         run = prof_p.add_run(data.get('professor_name', '[Professor Name]'))
         run.bold = True
+        
         doc.add_paragraph(data.get('professor_designation', 'Assistant Professor')).alignment = WD_ALIGN_PARAGRAPH.CENTER
         doc.add_paragraph("Department of Advance Computing").alignment = WD_ALIGN_PARAGRAPH.CENTER
         
         # Logo
         logo_path = os.path.join(app.static_folder, 'images', 'pce_logo.jpg')
         if os.path.exists(logo_path):
-            doc.add_picture(logo_path, width=Inches(1.5))
+            doc.add_picture(logo_path, width=Inches(1.2))
             last_p = doc.paragraphs[-1]
             last_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             
         doc.add_paragraph(f"(Session {data.get('session', '2025-26')})").alignment = WD_ALIGN_PARAGRAPH.CENTER
         doc.add_paragraph("Department of Advance Computing").alignment = WD_ALIGN_PARAGRAPH.CENTER
         doc.add_paragraph("Poornima College of Engineering").alignment = WD_ALIGN_PARAGRAPH.CENTER
-        doc.add_paragraph("Jan-June, 2026").alignment = WD_ALIGN_PARAGRAPH.CENTER
+        doc.add_paragraph("ISI-6, RIICO Institutional Area, Sitapura, Jaipur – 302022").alignment = WD_ALIGN_PARAGRAPH.CENTER
         
         doc.add_page_break() # Break after Cover Page
         
@@ -389,25 +399,104 @@ def export_docx():
         cert_p.add_run(data.get('certificate_students_text', '[Students]')).bold = True
         cert_p.add_run(" of the IV semester Department of Advance Computing, has submitted this Project report entitled ")
         cert_p.add_run(data.get('title', '[Title]')).bold = True
-        cert_p.add_run(f" under the supervision of {data.get('professor_name')}, {data.get('professor_designation')}...")
+        cert_p.add_run(f" under the supervision of {data.get('professor_name')}, {data.get('professor_designation')}, Department of Advance Computing, working in division of Advance Computing as per the requirements of the Bachelor of Technology program at Poornima College of Engineering, Jaipur affiliated by Rajasthan Technical University.")
+        
+        doc.add_paragraph()
+        doc.add_paragraph("Dr. Amol Saxena").bold = True
+        doc.add_paragraph("Head, Department of Advanced Computing")
         
         doc.add_page_break() # Break after Dept Certificate
         
         doc.add_heading("CANDIDATE'S DECLARATION", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
-        doc.add_paragraph("We hereby declare that the work which is being presented in this project report...")
+        decl_p = doc.add_paragraph("We hereby declare that the work which is being presented in this project report entitled ")
+        decl_p.add_run(data.get('title', '[Title]')).bold = True
+        decl_p.add_run(" in the partial fulfilment for the award of the Degree of Bachelor of Technology in CSE(Cyber Security), submitted in the Department of Advanced Computing, Poornima College of Engineering, Jaipur, is an authentic record of our work done during the period from ")
+        decl_p.add_run(data.get('session', '[Session]')).bold = True
+        decl_p.add_run(f" under the supervision and guidance of {data.get('professor_name')}, {data.get('professor_designation')}, Department of Advanced Computing.")
+        doc.add_paragraph("We have not submitted the matter embodied in this project report for the award of any other degree.")
+        
+        doc.add_paragraph()
+        for student in data.get('students', []):
+            doc.add_paragraph(f"Name of Candidate: {student.get('name')}")
+            doc.add_paragraph(f"Registration no: {student.get('reg_no')}")
+            doc.add_paragraph()
+
         doc.add_page_break() # Break after Candidate Declaration
         
         doc.add_heading("SUPERVISOR'S CERTIFICATE", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
-        doc.add_paragraph("This is to certify that, to the best of my knowledge...")
+        doc.add_paragraph("This is to certify that, to the best of my knowledge, the candidate's above statement is correct.")
+        doc.add_paragraph()
+        doc.add_paragraph(data.get('professor_name', '[Professor Name]')).bold = True
+        doc.add_paragraph(data.get('professor_designation', '[Designation]'))
+        doc.add_paragraph("Department of Advanced Computing")
+        
         doc.add_page_break() # Break after Supervisor Certificate
         
         doc.add_heading("ACKNOWLEDGEMENT", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
-        doc.add_paragraph("We would like to convey our profound sense of reverence...")
+        ack_p = doc.add_paragraph("We would like to convey our profound sense of reverence and admiration to my supervisor, ")
+        ack_p.add_run(f"{data.get('professor_name')}, {data.get('professor_designation')} in the Department of Advance Computing at Poornima College of Engineering").bold = True
+        ack_p.add_run(", for their intense concern, attention, priceless direction, guidance, and encouragement throughout this research work.")
+        
+        doc.add_paragraph("We are grateful to Dr. Mahesh Bundele, Principal & Director, and Dr. Pankaj Dhemla, Vice-Principal of Poornima College of Engineering, for providing the necessary resources and a conducive environment to carry out this project.")
+        doc.add_paragraph("Our special heartfelt gratitude goes to Dr. Amol Saxena, HOD, and Dr. Kamlesh Gautam, Dy. HOD, Department of Advanced Computing, for unvarying support, guidance, and motivation during this project work.")
+        doc.add_paragraph("We would like to express our deep sense of gratitude towards the management of Poornima College of Engineering, including Shri Shashikant Singhi, Chairman, Poornima Group, Mr. M. K. M. Shah, Director General, Poornima Group, and Ar. Rahul Singhi, Director of Poornima Group, for providing all the necessary resources and facilities required to complete this project.")
+        doc.add_paragraph("We would like to take the opportunity to express our thanks to all faculty members of the Department for their kind support, technical guidance, and inspiration throughout the course.")
+        doc.add_paragraph("We are also thankful to the non-teaching staff of the department for their support in the preparation of this dissertation work.")
+        doc.add_paragraph("We are deeply thankful to my parents and all other family members for their blessings and inspiration. Last, but not least, we would like to give special thanks to God who enabled me to complete my dissertation on time.")
+        
+        doc.add_paragraph()
+        for student in data.get('students', []):
+            doc.add_paragraph(f"{student.get('name')}, Department of Advanced Computing, {student.get('roll_no')}").bold = True
+
         doc.add_page_break() # Break after Acknowledgement
         
         doc.add_heading("TABLE OF CONTENTS", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
-        doc.add_paragraph("Contents...")
-        doc.add_page_break() # Break after Table of Contents
+        toc_table = doc.add_table(rows=1, cols=2)
+        toc_table.style = 'Normal'
+        toc_table.cell(0, 0).text = "Contents"
+        toc_table.cell(0, 1).text = "Page No."
+        toc_table.cell(0, 1).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        
+        toc_items = [
+            (data.get('abstract_title', 'ABSTRACT'), "1"),
+            (f"CHAPTER 1: {data.get('chapter_1_title')}", "2"),
+            (f"CHAPTER 2: {data.get('chapter_2_title')}", "3"),
+            (f"CHAPTER 3: {data.get('chapter_3_title')}", "4"),
+            (f"CHAPTER 4: {data.get('chapter_4_title')}", "5"),
+            (f"CHAPTER 5: {data.get('chapter_5_title')}", "6"),
+            (f"CHAPTER 6: {data.get('chapter_6_title')}", "7"),
+            ("REFERENCES", "8")
+        ]
+        for item, page in toc_items:
+            row = toc_table.add_row().cells
+            row[0].text = item
+            row[1].text = page
+            row[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            
+        doc.add_page_break()
+        
+        doc.add_heading("LIST OF FIGURES", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
+        fig_table = doc.add_table(rows=1, cols=4)
+        fig_table.style = 'Table Grid'
+        hdr = fig_table.rows[0].cells
+        hdr[0].text = "S. No."
+        hdr[1].text = "Fig. No."
+        hdr[2].text = "Description"
+        hdr[3].text = "Page No."
+        for i in range(2): fig_table.add_row() # Placeholder rows
+
+        doc.add_page_break()
+
+        doc.add_heading("LIST OF ACRONYMS", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
+        acr_table = doc.add_table(rows=1, cols=3)
+        acr_table.style = 'Table Grid'
+        hdr = acr_table.rows[0].cells
+        hdr[0].text = "Serial Number"
+        hdr[1].text = "ACRONYM"
+        hdr[2].text = "FULL FORM"
+        for i in range(2): acr_table.add_row() # Placeholder rows
+        
+        doc.add_page_break()
         
         # --- ABSTRACT ---
         doc.add_heading(data.get('abstract_title', 'ABSTRACT'), level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
