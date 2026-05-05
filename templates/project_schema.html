@@ -31,6 +31,10 @@
             .page-break {
                 page-break-before: always;
             }
+            .recurring-footer {
+                left: 0;
+                right: 0;
+            }
         }
         .page-break {
             page-break-before: always;
@@ -137,13 +141,52 @@
             display: block;
             margin-bottom: 8pt;
         }
+
+        /* Recurring Footer Styles */
+        .recurring-footer {
+            position: fixed;
+            bottom: 0;
+            left: 2.54cm;
+            right: 2.54cm;
+            font-size: 10pt;
+            text-align: left;
+            color: #333;
+            z-index: 1;
+            padding-bottom: 1cm;
+            background-color: transparent;
+        }
+
+        .cover-page-container {
+            position: relative;
+            min-height: 25cm; /* Ensure it covers the first page */
+            z-index: 10;
+            background: white;
+        }
+
+        .footer-mask {
+            position: absolute;
+            bottom: -3cm;
+            /* left: -3cm; */
+            right: -3cm;
+            height: 4cm;
+            background: white;
+            z-index: 100;
+            font-style: italic;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Recurring Footer -->
+    <div class="recurring-footer">
+        <i>Department of {{ dep_name | default('Advance Computing') }}, Poornima College of Engineering</i>
+    </div>
+
     <!-- COVER PAGE -->
-    <div class="text-center">
-        <div class="cover-title">{{ title }}</div>
+    <div class="cover-page-container">
+        <div class="text-center">
+            <div class="cover-title">{{ title }}</div>
         
         <div class="cover-subtitle">A {{ project_type }} Report submitted in partial fulfilment of the requirements of</div>
         <div class="cover-subtitle">The award of the degree of</div>
@@ -160,20 +203,22 @@
         <div class="cover-subtitle" style="margin-top: 10pt;">Under the guidance of</div>
         <div class="font-bold">{{ professor_name }}</div>
         <div>{{ professor_designation }}</div>
-        <div>Department of Advance Computing</div>
+        <div>Department of {{ dep_name | default('Advance Computing') }}</div>
         
         <img src="static/images/pce_logo.jpg" alt="College Logo" class="cover-logo">
         
         <div class="font-bold">(Session {{ session }})</div>
-        <div class="font-bold" style="font-size: 14pt;">Department of Advance Computing</div>
+        <div class="font-bold" style="font-size: 14pt;">Department of {{ dep_name | default('Advance Computing') }}</div>
         <div class="font-bold" style="font-size: 16pt;">Poornima College of Engineering</div>
         <div>ISI-6, RIICO Institutional Area, Sitapura, Jaipur – 302022</div>
-    </div>
+        </div> <!-- Close text-center -->
+        <div class="footer-mask"></div>
+    </div> <!-- Close cover-page-container -->
 
     <!-- DEPARTMENT CERTIFICATE -->
     <div class="page-break text-justify">
         <h2 class="text-center">DEPARTMENT CERTIFICATE</h2>
-        <p>This is to certify that <span class="font-bold">{{ certificate_students_text }}</span> of the IV semester Department of Advance Computing, has submitted this Project report entitled <span class="font-bold">{{ title }}</span> under the supervision of <span class="font-bold">{{ professor_name }}</span>, {{ professor_designation }}, Department of Advance Computing, working in division of Advance Computing as per the requirements of the Bachelor of Technology program at Poornima College of Engineering, Jaipur affiliated by Rajasthan Technical University.</p>
+        <p>This is to certify that <span class="font-bold">{{ certificate_students_text }}</span> of the IV semester Department of {{ dep_name | default('Advance Computing') }}, has submitted this Project report entitled <span class="font-bold">{{ title }}</span> under the supervision of <span class="font-bold">{{ professor_name }}</span>, {{ professor_designation }}, Department of {{ dep_name | default('Advance Computing') }}, working in division of Advance Computing as per the requirements of the Bachelor of Technology program at Poornima College of Engineering, Jaipur affiliated by Rajasthan Technical University.</p>
         
         <table class="signature-table">
             <tr>
@@ -260,7 +305,7 @@
     <!-- ACKNOWLEDGEMENT -->
     <div class="page-break text-justify">
         <h2 class="text-center">ACKNOWLEDGEMENT</h2>
-        <p>We would like to convey our profound sense of reverence and admiration to my supervisor, <span class="font-bold">{{ professor_name }}, {{ professor_designation }} in the Department of Advance Computing at Poornima College of Engineering</span>, for their intense concern, attention, priceless direction, guidance, and encouragement throughout this research work.</p>
+        <p>We would like to convey our profound sense of reverence and admiration to my supervisor, <span class="font-bold">{{ professor_name }}, {{ professor_designation }} in the Department of {{ dep_name | default('Advance Computing') }} at Poornima College of Engineering</span>, for their intense concern, attention, priceless direction, guidance, and encouragement throughout this research work.</p>
         <p>We are grateful to <span class="font-bold">Dr. Mahesh Bundele</span>, Principal & Director, and <span class="font-bold">Dr. Pankaj Dhemla</span>, Vice-Principal of Poornima College of Engineering, for providing the necessary resources and a conducive environment to carry out this project.</p>
         <p>Our special heartfelt gratitude goes to <span class="font-bold">Dr. Amol Saxena, HOD</span>, and <span class="font-bold">Dr. Kamlesh Gautam, Dy. HOD, Department of Advanced Computing</span>, for unvarying support, guidance, and motivation during this project work.</p>
         <p>We would like to express our deep sense of gratitude towards the management of Poornima College of Engineering, including <span class="font-bold">Shri Shashikant Singhi</span>, Chairman, Poornima Group, <span class="font-bold">Mr. M. K. M. Shah</span>, Director General, Poornima Group, and <span class="font-bold">Ar. Rahul Singhi, Director of Poornima Group</span>, for providing all the necessary resources and facilities required to complete this project.</p>
@@ -281,12 +326,12 @@
         <h3 class="text-left font-bold">Contents</h3>
         
         <a href="#abstract" class="toc-link">{{ abstract_title }} <span style="float: right;">1</span></a>
-        <a href="#chapter1" class="toc-link">CHAPTER 1: {{ chapter_1_title }} <span style="float: right;">2</span></a>
-        <a href="#chapter2" class="toc-link">CHAPTER 2: {{ chapter_2_title }} <span style="float: right;">3</span></a>
-        <a href="#chapter3" class="toc-link">CHAPTER 3: {{ chapter_3_title }} <span style="float: right;">4</span></a>
-        <a href="#chapter4" class="toc-link">CHAPTER 4: {{ chapter_4_title }} <span style="float: right;">5</span></a>
-        <a href="#chapter5" class="toc-link">CHAPTER 5: {{ chapter_5_title }} <span style="float: right;">6</span></a>
-        <a href="#chapter6" class="toc-link">CHAPTER 6: {{ chapter_6_title }} <span style="float: right;">7</span></a>
+        <a href="#chapter1" class="toc-link"> {{ chapter_1_title }} <span style="float: right;">2</span></a>
+        <a href="#chapter2" class="toc-link"> {{ chapter_2_title }} <span style="float: right;">3</span></a>
+        <a href="#chapter3" class="toc-link"> {{ chapter_3_title }} <span style="float: right;">4</span></a>
+        <a href="#chapter4" class="toc-link"> {{ chapter_4_title }} <span style="float: right;">5</span></a>
+        <a href="#chapter5" class="toc-link"> {{ chapter_5_title }} <span style="float: right;">6</span></a>
+        <a href="#chapter6" class="toc-link"> {{ chapter_6_title }} <span style="float: right;">7</span></a>
         <a href="#references" class="toc-link">REFERENCES <span style="float: right;">8</span></a>
     </div>
 
@@ -375,7 +420,7 @@
 
     <!-- FOOTER -->
     <div style="margin-top: 40pt; text-align: left; font-size: 10pt;">
-        <p>Department of Advance Computing, Poornima College of Engineering</p>
+        <p>Department of {{ dep_name | default('Advance Computing') }}, Poornima College of Engineering</p>
     </div>
 
 </body>

@@ -3,6 +3,7 @@ import io
 import base64
 import json
 import concurrent.futures
+import time
 from flask import Flask, render_template, request, jsonify, Response, send_file
 from dotenv import load_dotenv
 from groq import Groq
@@ -31,57 +32,68 @@ def generate_full_report():
 
     try:
         client = Groq(api_key=api_key)
+        existing_data = data.get('existing_data')
         
         # --- PROJECT REPORT (Multi-Pass Generation) ---
         if report_format == 'project_report':
-            # Phase 1: Metadata, Titles, Abstract, References
-            system_prompt_base = (
-                "You are an expert academic project coordinator. "
-                "Define the metadata, detailed abstract, references, and 6 relevant technical chapter titles for a dissertation. "
-                "Tone: Formal and Academic. Format: JSON schema provided. "
-                "You may use simple HTML for the abstract: <p> for paragraphs, <b> for bold, <i> for italics, and <ul>/<li> for lists if needed."
-            )
+            # Determine if we are retrying failed sections
+            is_retry = False
+            if existing_data:
+                failed_chapters = [i for i in range(1, 7) if str(existing_data.get(f'chapter_{i}_content', '')).startswith("Content generation failed")]
+                if failed_chapters:
+                    is_retry = True
+                    result = existing_data
             
-            base_schema = {
-                "name": "project_report_base_schema",
-                "strict": False,
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "title": {"type": "string"},
-                        "project_type": {"type": "string"},
-                        "branch": {"type": "string"},
-                        "session": {"type": "string"},
-                        "professor_name": {"type": "string"},
-                        "professor_designation": {"type": "string"},
-                        "certificate_students_text": {"type": "string"},
-                        "students": {
-                            "type": "array",
-                            "items": {"type": "object", "properties": {"name": {"type": "string"}, "reg_no": {"type": "string"}, "roll_no": {"type": "string"}}}
+            if not is_retry:
+                # Phase 1: Metadata, Titles, Abstract, References
+                system_prompt_base = (
+                    "You are an expert academic project coordinator. "
+                    "Define the metadata, detailed abstract, references, and 6 relevant technical chapter titles for a dissertation. "
+                    "Tone: Formal and Academic. Format: JSON schema provided. "
+                    "You may use simple HTML for the abstract: <p> for paragraphs, <b> for bold, <i> for italics, and <ul>/<li> for lists if needed."
+                )
+                
+                base_schema = {
+                    "name": "project_report_base_schema",
+                    "strict": False,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "title": {"type": "string"},
+                            "project_type": {"type": "string"},
+                            "branch": {"type": "string"},
+                            "dep_name": {"type": "string", "default": "Advance Computing"},
+                            "session": {"type": "string"},
+                            "professor_name": {"type": "string"},
+                            "professor_designation": {"type": "string"},
+                            "certificate_students_text": {"type": "string"},
+                            "students": {
+                                "type": "array",
+                                "items": {"type": "object", "properties": {"name": {"type": "string"}, "reg_no": {"type": "string"}, "roll_no": {"type": "string"}}}
+                            },
+                            "abstract_title": {"type": "string", "default": "ABSTRACT"},
+                            "abstract_content": {"type": "string"},
+                            "keywords": {"type": "string"},
+                            "chapter_1_title": {"type": "string"},
+                            "chapter_2_title": {"type": "string"},
+                            "chapter_3_title": {"type": "string"},
+                            "chapter_4_title": {"type": "string"},
+                            "chapter_5_title": {"type": "string"},
+                            "chapter_6_title": {"type": "string"},
+                            "references": {"type": "array", "items": {"type": "string"}}
                         },
-                        "abstract_title": {"type": "string", "default": "ABSTRACT"},
-                        "abstract_content": {"type": "string"},
-                        "keywords": {"type": "string"},
-                        "chapter_1_title": {"type": "string"},
-                        "chapter_2_title": {"type": "string"},
-                        "chapter_3_title": {"type": "string"},
-                        "chapter_4_title": {"type": "string"},
-                        "chapter_5_title": {"type": "string"},
-                        "chapter_6_title": {"type": "string"},
-                        "references": {"type": "array", "items": {"type": "string"}}
-                    },
-                    "required": ["title", "chapter_1_title"]
+                        "required": ["title", "chapter_1_title"]
+                    }
                 }
-            }
 
-            prompt_base = f"Create the foundation for an engineering dissertation based on this description: {description}. Provide descriptive metadata, an extensive multi-paragraph abstract, 5-8 IEEE references, and 6 technical chapter titles (starting with CHAPTER X: ...)."
-            
-            response_base = client.chat.completions.create(
-                model="openai/gpt-oss-120b",
-                messages=[{"role": "system", "content": system_prompt_base}, {"role": "user", "content": prompt_base}],
-                response_format={"type": "json_schema", "json_schema": base_schema}
-            )
-            result = json.loads(response_base.choices[0].message.content or "{}")
+                prompt_base = f"Create the foundation for an engineering dissertation based on this description: {description}. Provide descriptive metadata, an extensive multi-paragraph abstract, 5-8 IEEE references, and 6 technical chapter titles (starting with CHAPTER X: ...)."
+                
+                response_base = client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "system", "content": system_prompt_base}, {"role": "user", "content": prompt_base}],
+                    response_format={"type": "json_schema", "json_schema": base_schema}
+                )
+                result = json.loads(response_base.choices[0].message.content or "{}")
 
             # Phase 2: Chapter Content Generation (Parallel)
             def generate_chapter_content(idx, chapter_title):
@@ -97,37 +109,49 @@ def generate_full_report():
                 )
                 chap_prompt = f"Write the complete, extremely detailed, multi-paragraph content for {chapter_title} of the project: {result.get('title')}. Context: {description}"
                 
-                chap_resp = client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "system", "content": chap_system_prompt}, {"role": "user", "content": chap_prompt}],
-                    response_format={
-                        "type": "json_schema",
-                        "json_schema": {
-                            "name": "chapter_content",
-                            "strict": False,
-                            "schema": {
-                                "type": "object",
-                                "properties": {"content": {"type": "string"}},
-                                "required": ["content"]
+                # Internal retry loop (3 attempts)
+                for attempt in range(3):
+                    try:
+                        chap_resp = client.chat.completions.create(
+                            model="openai/gpt-oss-120b",
+                            messages=[{"role": "system", "content": chap_system_prompt}, {"role": "user", "content": chap_prompt}],
+                            response_format={
+                                "type": "json_schema",
+                                "json_schema": {
+                                    "name": "chapter_content",
+                                    "strict": False,
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {"content": {"type": "string"}},
+                                        "required": ["content"]
+                                    }
+                                }
                             }
-                        }
-                    }
-                )
-                return json.loads(chap_resp.choices[0].message.content or "{}").get("content", "")
+                        )
+                        return json.loads(chap_resp.choices[0].message.content or "{}").get("content", "")
+                    except Exception as e:
+                        if attempt < 2: # Don't sleep on last attempt
+                            time.sleep(2 * (attempt + 1))
+                        last_error = str(e)
+                
+                raise Exception(last_error)
 
-            # Execute parallel calls
-            with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+            # Execute parallel calls (Reduced to 3 workers to avoid rate limits)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
                 future_to_idx = {}
                 for i in range(1, 7):
                     title = result.get(f'chapter_{i}_title', f'CHAPTER {i}: CONTENT')
-                    future_to_idx[executor.submit(generate_chapter_content, i, title)] = i
+                    # ONLY generate if it's not a retry OR if it failed previously
+                    content = str(result.get(f'chapter_{i}_content', ''))
+                    if not content or content.startswith("Content generation failed"):
+                        future_to_idx[executor.submit(generate_chapter_content, i, title)] = i
                 
                 for future in concurrent.futures.as_completed(future_to_idx):
                     idx = future_to_idx[future]
                     try:
                         result[f'chapter_{idx}_content'] = future.result()
-                    except Exception:
-                        result[f'chapter_{idx}_content'] = "Content generation failed for this section."
+                    except Exception as e:
+                        result[f'chapter_{idx}_content'] = f"Content generation failed for this section. Error: {str(e)}"
             
             return jsonify(result)
 
@@ -164,7 +188,14 @@ def generate_full_report():
                         "key_highlights": {"type": "array", "items": {"type": "string"}},
                         "conclusion": {"type": "string"}
                     },
-                    "required": ["event_name", "introduction", "conclusion"]
+                    "required": [
+                        "event_name", "event_date", "event_duration", "event_type", 
+                        "organized_by", "coordinators", "learning_outcome_1", 
+                        "learning_outcome_2", "learning_outcome_3", "learning_outcome_4", 
+                        "introduction", "details_of_the_event", "description_of_the_event", 
+                        "beneficiaries", "session_overview", "key_highlights", "conclusion"
+                    ],
+                    "additionalProperties": False
                 }
             }
             
@@ -327,6 +358,14 @@ def export_docx():
     if report_format == 'project_report':
         report_name = data.get('title', 'Project_Report')
         
+        # Configure Footer for all pages except the first
+        section = doc.sections[0]
+        section.different_first_page_header_footer = True
+        footer = section.footer
+        footer_p = footer.paragraphs[0]
+        footer_p.text = f"Department of {data.get('dep_name', 'Advance Computing')}, Poornima College of Engineering"
+        footer_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        
         # --- COVER PAGE ---
         title_p = doc.add_paragraph()
         title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -452,7 +491,6 @@ def export_docx():
         
         doc.add_heading("TABLE OF CONTENTS", level=1).alignment = WD_ALIGN_PARAGRAPH.CENTER
         toc_table = doc.add_table(rows=1, cols=2)
-        toc_table.style = 'Normal'
         toc_table.cell(0, 0).text = "Contents"
         toc_table.cell(0, 1).text = "Page No."
         toc_table.cell(0, 1).paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.RIGHT

@@ -374,6 +374,7 @@
             <div class="form-group"><label>Project Title</label><input type="text" id="proj_title"></div>
             <div class="form-group"><label>Project Type</label><input type="text" id="proj_type"></div>
             <div class="form-group"><label>Branch</label><input type="text" id="proj_branch"></div>
+            <div class="form-group"><label>Department Name</label><input type="text" id="proj_dep_name"></div>
             <div class="form-group"><label>Session</label><input type="text" id="proj_session"></div>
             <div class="form-group"><label>Supervisor Name</label><input type="text" id="proj_prof"></div>
             <div class="form-group"><label>Supervisor Designation</label><input type="text" id="proj_desig"></div>
@@ -427,6 +428,11 @@
         <button class="btn-action" onclick="renderPreview()">Update Preview</button>
         <button class="btn-action" onclick="printReport()">Print / PDF</button>
         <button class="btn-action" onclick="exportToWord()">Export to Word</button>
+    </div>
+
+    <!-- Branding -->
+    <div style="margin-top: 20px; text-align: center; font-size: 12px; color: var(--text-muted);">
+        Made with ❤️ by <a href="https://github.com/just-karrot/automated_report" target="_blank" style="color: var(--text); text-decoration: none; font-weight: 500;">Karan Aswani</a>
     </div>
 </div>
 
@@ -501,7 +507,8 @@
                     api_key: apiKey, 
                     description: desc, 
                     event_category: getVal('eventCategory'),
-                    report_format: format
+                    report_format: format,
+                    existing_data: Object.keys(generatedData).length > 0 ? generatedData : null
                 })
             });
             const data = await res.json();
@@ -520,6 +527,7 @@
                 setVal('proj_title', data.title);
                 setVal('proj_type', data.project_type);
                 setVal('proj_branch', data.branch);
+                setVal('proj_dep_name', data.dep_name || 'Advance Computing');
                 setVal('proj_session', data.session);
                 setVal('proj_prof', data.professor_name);
                 setVal('proj_desig', data.professor_designation);
@@ -601,6 +609,7 @@
                 title: getVal('proj_title'),
                 project_type: getVal('proj_type'),
                 branch: getVal('proj_branch'),
+                dep_name: getVal('proj_dep_name'),
                 session: getVal('proj_session'),
                 professor_name: getVal('proj_prof'),
                 professor_designation: getVal('proj_desig'),
@@ -700,6 +709,7 @@
                 title: getVal('proj_title'),
                 project_type: getVal('proj_type'),
                 branch: getVal('proj_branch'),
+                dep_name: getVal('proj_dep_name'),
                 session: getVal('proj_session'),
                 professor_name: getVal('proj_prof'),
                 professor_designation: getVal('proj_desig'),
