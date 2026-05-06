@@ -11,8 +11,9 @@
             color: #000;
             line-height: 1.5;
             margin: 0 auto;
-            padding: 2.54cm; /* ISO A4 standard 1-inch margins for web preview */
-            max-width: 21cm; /* Standard A4 width */
+            padding: 2.54cm; /* ISO A4 standard 1-inch margins */
+            padding-bottom: 4cm; /* Space for footer in web preview */
+            max-width: 21cm; 
             background: #fff;
             box-sizing: border-box;
         }
@@ -25,15 +26,20 @@
         
         @media print {
             body {
-                padding: 0; /* Let @page handle margins during print */
+                padding: 0;
                 max-width: 100%;
+                padding-bottom: 0;
             }
             .page-break {
                 page-break-before: always;
             }
             .recurring-footer {
-                left: 0;
-                right: 0;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                margin: 0px !important;
+                background-color: transparent !important;
+                border-top: none !important;
             }
         }
         .page-break {
@@ -146,33 +152,22 @@
         .recurring-footer {
             position: fixed;
             bottom: 0;
+            margin: 0px;
             left: 2.54cm;
-            right: 2.54cm;
             font-size: 10pt;
             text-align: left;
             color: #333;
-            z-index: 1;
-            padding-bottom: 1cm;
+            z-index: 1000;
             background-color: transparent;
-        }
-
-        .cover-page-container {
-            position: relative;
-            min-height: 25cm; /* Ensure it covers the first page */
-            z-index: 10;
-            background: white;
         }
 
         .footer-mask {
             position: absolute;
             bottom: -3cm;
-            /* left: -3cm; */
             right: -3cm;
             height: 4cm;
             background: white;
             z-index: 100;
-            font-style: italic;
-            text-align: left;
         }
     </style>
 </head>
@@ -417,11 +412,6 @@
         <li>{{ ref }}</li>
         {% endfor %}
     </ul>
-
-    <!-- FOOTER -->
-    <div style="margin-top: 40pt; text-align: left; font-size: 10pt;">
-        <p>Department of {{ dep_name | default('Advance Computing') }}, Poornima College of Engineering</p>
-    </div>
 
 </body>
 </html>
