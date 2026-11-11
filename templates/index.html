@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Generator — Swiss Modernism</title>
+    <title>ReportStudio — AI-Powered Report Automation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -11,70 +11,65 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            /* Swiss Modernism 2.0 Design Tokens */
-            --bg: #F4F4F5;
+            /* Swiss Modernism 2.0 Tokens */
+            --bg-app: #F4F4F5;
             --surface: #FFFFFF;
-            --surface-hover: #F9FAFB;
+            --surface-hover: #FAFAFA;
+            --surface-elevated: #FFFFFF;
+            --canvas-bg: #121214;
             --dark: #18181B;
             --accent: #18181B;
             --accent-hover: #27272A;
-            --input-bg: #FFFFFF;
             --border: #E4E4E7;
             --border-hover: #D4D4D8;
             --border-focus: #18181B;
+            --text-primary: #18181B;
+            --text-secondary: #52525B;
             --text-muted: #71717A;
-            --text-body: #27272A;
-            --text: #18181B;
             --ring: rgba(24, 24, 27, 0.12);
             --radius-sm: 6px;
             --radius: 8px;
             --radius-md: 10px;
+            --header-h: 56px;
             --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
-            --shadow-preview: 0 12px 36px -4px rgba(0, 0, 0, 0.35);
+            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-preview: 0 16px 40px -8px rgba(0, 0, 0, 0.45);
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--dark);
-            display: flex;
+            background: var(--bg-app);
+            color: var(--text-primary);
             height: 100vh;
             min-height: 100dvh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ── SIDEBAR ── */
-        .sidebar {
-            width: 420px;
-            min-width: 340px;
-            max-width: 85vw;
-            padding: 24px;
-            overflow-y: auto;
-            overflow-x: auto;
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        /* ── TOP APPLICATION BAR ── */
+        .app-header {
+            height: var(--header-h);
             background: var(--surface);
-            resize: horizontal;
-        }
-
-        .sidebar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .sidebar::-webkit-scrollbar-track { background: transparent; }
-        .sidebar::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 4px; }
-        .sidebar::-webkit-scrollbar-thumb:hover { background: #A1A1AA; }
-
-        .brand {
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 2px;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+            flex-shrink: 0;
         }
-        .brand-mark {
-            width: 28px;
-            height: 28px;
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 240px;
+        }
+        .brand-logo {
+            width: 30px;
+            height: 30px;
             background: var(--dark);
             border-radius: var(--radius-sm);
             display: flex;
@@ -82,52 +77,252 @@
             justify-content: center;
             box-shadow: var(--shadow-subtle);
         }
-        .brand-mark span {
-            color: var(--surface);
+        .brand-logo span {
+            color: #FFFFFF;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             letter-spacing: -0.02em;
         }
-        .brand h1 {
-            font-size: 16px;
+        .brand-info h1 {
+            font-size: 14px;
             font-weight: 700;
             letter-spacing: -0.02em;
-            color: var(--dark);
+            color: var(--text-primary);
+            line-height: 1.2;
         }
-        .brand-sub {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
+        .brand-info span {
+            font-size: 10px;
             font-weight: 500;
-            margin-bottom: 4px;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
 
-        /* ── FORM ELEMENTS ── */
+        /* Centered Segmented Control */
+        .header-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .format-segmented {
+            display: flex;
+            background: var(--bg-app);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 3px;
+            gap: 3px;
+        }
+        .format-segmented .toggle-btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .format-segmented .toggle-btn.active {
+            background: var(--surface);
+            color: var(--dark);
+            font-weight: 600;
+            box-shadow: var(--shadow-subtle);
+        }
+        .format-segmented .toggle-btn:hover:not(.active) {
+            color: var(--dark);
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        /* Right Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 240px;
+            justify-content: flex-end;
+        }
+        .autosave-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            padding: 4px 10px;
+            background: var(--bg-app);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .autosave-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10B981;
+        }
+        .autosave-dot.saving {
+            background: #F59E0B;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .btn-header {
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease-out;
+        }
+        .btn-header:hover {
+            background: var(--bg-app);
+            border-color: var(--border-hover);
+        }
+        .btn-header.primary {
+            background: var(--dark);
+            color: #FFFFFF;
+            border-color: var(--dark);
+        }
+        .btn-header.primary:hover {
+            background: var(--accent-hover);
+        }
+
+        /* ── WORKSPACE BODY (DUAL PANE) ── */
+        .app-workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ── LEFT PANE: EDITOR WORKSPACE ── */
+        .editor-pane {
+            width: 480px;
+            min-width: 360px;
+            max-width: 650px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+            resize: horizontal;
+        }
+
+        /* Workspace Sub-tabs */
+        .editor-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            padding: 0 16px;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .editor-tab-btn {
+            padding: 12px 10px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .editor-tab-btn:hover {
+            color: var(--text-primary);
+        }
+        .editor-tab-btn.active {
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom-color: var(--dark);
+        }
+
+        /* Tab Content Scroller */
+        .editor-content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .editor-content-area::-webkit-scrollbar { width: 5px; }
+        .editor-content-area::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 4px; }
+
+        .editor-tab-panel {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .editor-tab-panel.active {
+            display: flex;
+        }
+
+        /* Card Containers */
+        .ui-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: var(--shadow-card);
+        }
+        .ui-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .ui-card-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+        }
+
+        /* Form elements */
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
-
         label {
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-muted);
+            color: var(--text-secondary);
         }
-
         input, textarea, select {
             padding: 9px 12px;
             border: 1px solid var(--border);
             border-radius: var(--radius);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 13px;
-            background: var(--input-bg);
-            color: var(--dark);
+            background: var(--surface);
+            color: var(--text-primary);
             outline: none;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         input:hover, textarea:hover, select:hover {
             border-color: var(--border-hover);
@@ -138,14 +333,14 @@
         }
         textarea {
             resize: vertical;
-            min-height: 72px;
+            min-height: 80px;
             line-height: 1.5;
         }
         input::placeholder, textarea::placeholder {
             color: #A1A1AA;
         }
 
-        /* ── SEGMENTED CONTROLS / TOGGLES ── */
+        /* Category toggle */
         .category-group {
             display: flex;
             flex-direction: column;
@@ -153,15 +348,15 @@
         }
         .toggle-row {
             display: flex;
-            background: var(--bg);
+            background: var(--bg-app);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 3px;
             gap: 3px;
         }
-        .toggle-btn {
+        .toggle-row .toggle-btn {
             flex: 1;
-            padding: 8px 6px;
+            padding: 7px 6px;
             border: none;
             border-radius: var(--radius-sm);
             background: transparent;
@@ -174,24 +369,20 @@
             transition: all 0.15s ease-out;
             text-transform: uppercase;
         }
-        .toggle-btn.active {
+        .toggle-row .toggle-btn.active {
             background: var(--surface);
             color: var(--dark);
             box-shadow: var(--shadow-subtle);
         }
-        .toggle-btn:hover:not(.active) {
-            color: var(--dark);
-            background: rgba(0, 0, 0, 0.03);
-        }
 
-        /* ── BUTTONS ── */
+        /* Primary Generate Button */
         .btn-generate {
             width: 100%;
-            padding: 11px 16px;
+            padding: 12px 16px;
             border: none;
             border-radius: var(--radius);
             background: var(--dark);
-            color: var(--surface);
+            color: #FFFFFF;
             font-family: 'Inter', sans-serif;
             font-size: 12px;
             font-weight: 600;
@@ -200,6 +391,10 @@
             cursor: pointer;
             transition: all 0.15s ease-out;
             box-shadow: var(--shadow-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .btn-generate:hover {
             background: var(--accent-hover);
@@ -216,14 +411,20 @@
             box-shadow: none;
         }
 
-        .actions {
+        /* Bottom Fixed Action Toolbar inside Editor */
+        .editor-bottom-bar {
+            padding: 12px 20px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
             display: flex;
-            gap: 8px;
-            margin-top: 4px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-shrink: 0;
         }
         .btn-action {
             flex: 1;
-            padding: 9px 8px;
+            padding: 8px 12px;
             border: 1px solid var(--border);
             border-radius: var(--radius);
             background: var(--surface);
@@ -235,40 +436,30 @@
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.15s ease-out;
+            text-align: center;
         }
         .btn-action:hover {
-            background: var(--bg);
+            background: var(--bg-app);
             border-color: var(--border-hover);
         }
-        .btn-action:active {
-            transform: translateY(1px);
+        .btn-action.btn-secondary {
+            color: var(--text-muted);
+            flex: 0 0 auto;
+        }
+        .btn-action.btn-secondary:hover {
+            color: #EF4444;
+            border-color: #FCA5A5;
+            background: #FEF2F2;
         }
 
-        /* ── DIVIDER ── */
-        .divider {
-            width: 100%;
-            height: 1px;
-            background: var(--border);
-            margin: 2px 0;
-            border: none;
-        }
-
-        .section-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--dark);
-        }
-
-        /* ── COLLAPSIBLE SECTIONS ── */
+        /* Collapsible accordion within Content Tab */
         .collapse-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
             padding: 10px 12px;
-            background: var(--bg);
+            background: var(--bg-app);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             user-select: none;
@@ -295,227 +486,405 @@
         }
         .collapse-body.open { display: flex; }
 
-        /* ── PREVIEW PANEL ── */
-        .preview {
+        /* ── RIGHT PANE: DOCUMENT CANVAS ── */
+        .canvas-pane {
             flex: 1;
-            background: #18181B;
-            padding: 24px;
+            background: var(--canvas-bg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Canvas Top Toolbar */
+        .canvas-toolbar {
+            height: 44px;
+            background: rgba(24, 24, 27, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            backdrop-filter: blur(8px);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        .canvas-doc-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: #A1A1AA;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .canvas-doc-title strong {
+            color: #F4F4F5;
+        }
+        .canvas-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .zoom-group {
+            display: flex;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .zoom-btn {
+            background: transparent;
+            border: none;
+            color: #A1A1AA;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .zoom-btn.active, .zoom-btn:hover {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .canvas-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            color: #E4E4E7;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 10px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .canvas-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #FFFFFF;
+        }
+
+        /* Canvas Viewport */
+        .canvas-viewport {
+            flex: 1;
+            overflow: auto;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            overflow-y: auto;
+            padding: 32px 16px;
             position: relative;
         }
-        .preview::-webkit-scrollbar { width: 6px; height: 6px; }
-        .preview::-webkit-scrollbar-thumb { background: #3F3F46; border-radius: 4px; }
-        .preview iframe {
-            width: 21cm;
-            height: 29.7cm;
-            background: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            box-shadow: var(--shadow-preview);
-            transform: scale(0.75);
+        .canvas-viewport::-webkit-scrollbar { width: 6px; height: 6px; }
+        .canvas-viewport::-webkit-scrollbar-thumb { background: #3F3F46; border-radius: 4px; }
+
+        .canvas-sheet-wrapper {
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             transform-origin: top center;
         }
+        .canvas-sheet-wrapper iframe {
+            width: 21cm;
+            height: 29.7cm;
+            background: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 3px;
+            box-shadow: var(--shadow-preview);
+            display: block;
+        }
 
-        /* ── MOBILE RESPONSIVE ── */
-        @media (max-width: 850px) {
-            body {
+        /* ── HIDDEN UTILITY ── */
+        .hidden { display: none !important; }
+
+        /* ── RESPONSIVE DESIGN ── */
+        @media (max-width: 900px) {
+            .app-workspace {
                 flex-direction: column;
                 height: auto;
-                min-height: 100dvh;
                 overflow-y: auto;
             }
-            .sidebar {
+            .editor-pane {
                 width: 100% !important;
-                min-width: 100%;
                 max-width: 100%;
-                height: auto;
                 resize: none;
                 border-right: none;
                 border-bottom: 1px solid var(--border);
-                padding: 20px 16px;
-                overflow-x: hidden;
+                height: auto;
             }
-            .preview {
-                padding: 16px 12px;
-                min-height: 100vh;
-                overflow-x: hidden;
+            .canvas-pane {
+                min-height: 80vh;
             }
-            .preview iframe {
-                transform: scale(0.45);
-                transform-origin: top center;
-                max-width: 100%;
+            .header-brand { min-width: auto; }
+            .header-actions { min-width: auto; }
+            .canvas-sheet-wrapper {
+                transform: scale(0.48) !important;
             }
-            .brand h1 { font-size: 15px; }
-            .toggle-btn { font-size: 10px; }
         }
-
-        /* ── HIDDEN ── */
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <!-- Brand -->
-    <div class="brand">
-        <div class="brand-mark"><span>R</span></div>
-        <h1>College Report Generator</h1>
-    </div>
-    <div class="brand-sub">AI-Powered Event Reporting</div>
-
-    <!-- API Key -->
-    <div class="form-group">
-        <label>Groq API Key</label>
-        <input type="password" id="apiKey" placeholder="Enter API Key">
-    </div>
-
-    <!-- Report Format Toggle -->
-    <div class="category-group">
-        <label>Report Format</label>
-        <div class="toggle-row">
-            <button class="toggle-btn active" data-format="event_report" onclick="selectFormat(this)">Event Report</button>
-            <button class="toggle-btn" data-format="project_report" onclick="selectFormat(this)">Project Report</button>
-        </div>
-        <input type="hidden" id="reportFormat" value="event_report">
-    </div>
-
-    <!-- Event Specific Inputs -->
-    <div id="eventInputs">
-        <!-- Event Category Toggle -->
-        <div class="category-group">
-            <label>Event Category</label>
-            <div class="toggle-row">
-                <button class="toggle-btn active" data-cat="technical" onclick="selectCategory(this)">Technical</button>
-                <button class="toggle-btn" data-cat="cultural" onclick="selectCategory(this)">Cultural</button>
-                <button class="toggle-btn" data-cat="sports" onclick="selectCategory(this)">Sports</button>
-            </div>
-            <input type="hidden" id="eventCategory" value="technical">
-        </div>
-
-        <div class="form-group">
-            <label>Event Description</label>
-            <textarea id="eventDescription" placeholder="Describe the event in detail: name, date, organizers, flow, speakers, key highlights..." style="min-height: 110px;"></textarea>
-        </div>
-    </div>
-
-    <!-- Project Specific Inputs -->
-    <div id="projectInputs" class="hidden">
-        <div class="form-group">
-            <label>Project Description</label>
-            <textarea id="projectDescription" placeholder="Describe your project: title, objectives, methodology, system design, results..." style="min-height: 140px;"></textarea>
-        </div>
-        <div class="form-group">
-            <label>Student Details (CSV: Name, RegNo, RollNo)</label>
-            <textarea id="studentDetails" placeholder="Student A, PCE22CA001, 101&#10;Student B, PCE22CA002, 102"></textarea>
-        </div>
-    </div>
-
-    <!-- Generate Button -->
-    <button class="btn-generate" id="genBtn" onclick="generateAll()">Generate Full Report</button>
-
-    <div class="divider"></div>
-
-    <!-- Editable Fields (collapsed by default) -->
-    <div class="collapse-header" onclick="toggleSection(this)">
-        <span class="section-label">Edit Generated Content</span>
-        <span class="arrow">▶</span>
-    </div>
-    <div class="collapse-body">
-        <!-- Event Edit Fields -->
-        <div id="eventEditFields">
-            <div class="form-group"><label>Event Name</label><input type="text" id="event_name"></div>
-            <div class="form-group"><label>Date</label><input type="text" id="event_date"></div>
-            <div class="form-group"><label>Duration</label><input type="text" id="event_duration"></div>
-            <div class="form-group"><label>Activity Type</label><input type="text" id="event_type"></div>
-            <div class="form-group"><label>Organized By</label><input type="text" id="organized_by"></div>
-            <div class="form-group"><label>Coordinators</label><textarea id="coordinators"></textarea></div>
-            <div class="form-group"><label>Introduction</label><textarea id="introduction"></textarea></div>
-            <div class="form-group"><label>Event Details</label><textarea id="details_of_the_event"></textarea></div>
-            <div class="form-group"><label>Event Description</label><textarea id="description_of_the_event"></textarea></div>
-            <div class="form-group"><label>Beneficiaries</label><input type="text" id="beneficiaries"></div>
-            <div class="form-group"><label>Session Overview</label><textarea id="session_overview"></textarea></div>
-            <div class="form-group"><label>Conclusion</label><textarea id="conclusion"></textarea></div>
-        </div>
-
-        <!-- Project Edit Fields -->
-        <div id="projectEditFields" class="hidden">
-            <div class="form-group"><label>Project Title</label><input type="text" id="proj_title"></div>
-            <div class="form-group"><label>Project Type</label><input type="text" id="proj_type"></div>
-            <div class="form-group"><label>Branch</label><input type="text" id="proj_branch"></div>
-            <div class="form-group"><label>Department Name</label><input type="text" id="proj_dep_name"></div>
-            <div class="form-group"><label>Session</label><input type="text" id="proj_session"></div>
-            <div class="form-group"><label>Supervisor Name</label><input type="text" id="proj_prof"></div>
-            <div class="form-group"><label>Supervisor Designation</label><input type="text" id="proj_desig"></div>
-            <div class="form-group"><label>Abstract Title</label><input type="text" id="proj_abs_title"></div>
-            <div class="form-group"><label>Abstract Content</label><textarea id="proj_abs_content"></textarea></div>
-            <div class="form-group"><label>Keywords</label><input type="text" id="proj_keywords"></div>
-            <div class="form-group"><label>Chapter 1 Title</label><input type="text" id="ch1_title"></div>
-            <div class="form-group"><label>Chapter 1 Content</label><textarea id="ch1_content"></textarea></div>
-            <div class="form-group"><label>Chapter 2 Title</label><input type="text" id="ch2_title"></div>
-            <div class="form-group"><label>Chapter 2 Content</label><textarea id="ch2_content"></textarea></div>
-            <div class="form-group"><label>Chapter 3 Title</label><input type="text" id="ch3_title"></div>
-            <div class="form-group"><label>Chapter 3 Content</label><textarea id="ch3_content"></textarea></div>
-            <div class="form-group"><label>Chapter 4 Title</label><input type="text" id="ch4_title"></div>
-            <div class="form-group"><label>Chapter 4 Content</label><textarea id="ch4_content"></textarea></div>
-            <div class="form-group"><label>Chapter 5 Title</label><input type="text" id="ch5_title"></div>
-            <div class="form-group"><label>Chapter 5 Content</label><textarea id="ch5_content"></textarea></div>
-            <div class="form-group"><label>Chapter 6 Title</label><input type="text" id="ch6_title"></div>
-            <div class="form-group"><label>Chapter 6 Content</label><textarea id="ch6_content"></textarea></div>
-            <div class="form-group"><label>References (one per line)</label><textarea id="proj_refs" placeholder="[1] Author Name, Title..."></textarea></div>
-        </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- Participants & Image -->
-    <div class="collapse-header" onclick="toggleSection(this)">
-        <span class="section-label">Attendance &amp; Media</span>
-        <span class="arrow">▶</span>
-    </div>
-    <div class="collapse-body" id="mediaFields">
-        <div id="eventAttendance">
-            <div class="form-group">
-                <label>Participants List (CSV: ID, Name) — Optional</label>
-                <textarea id="participantsLog" placeholder="PCE23AD007, Anuj Sharma&#10;PCE23AD010, Aryan..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Event Image</label>
-                <input type="file" accept="image/*" onchange="encodeImageFileAsURL(this, 'image_placeholder')">
-                <input type="hidden" id="image_placeholder" value="images/image1.png">
+    <!-- TOP APPLICATION BAR -->
+    <header class="app-header">
+        <div class="header-brand">
+            <div class="brand-logo"><span>R</span></div>
+            <div class="brand-info">
+                <h1>ReportStudio</h1>
+                <span>AI-Powered Generator</span>
             </div>
         </div>
-        <div id="projectPlaceholder" class="hidden">
-            <p style="font-size: 11px; color: var(--text-muted);">Media management for projects (e.g. figure uploads) coming soon.</p>
+
+        <div class="header-center">
+            <!-- Format Segmented Toggle -->
+            <div class="format-segmented">
+                <button class="toggle-btn active" data-format="event_report" onclick="selectFormat(this)">
+                    Event Report
+                </button>
+                <button class="toggle-btn" data-format="project_report" onclick="selectFormat(this)">
+                    Project Report
+                </button>
+            </div>
+            <input type="hidden" id="reportFormat" value="event_report">
         </div>
+
+        <div class="header-actions">
+            <div class="autosave-pill" id="autosaveStatus">
+                <span class="autosave-dot"></span>
+                <span>Saved locally</span>
+            </div>
+            <button class="btn-header" onclick="exportToWord()">
+                <span>Export Word</span>
+            </button>
+            <button class="btn-header primary" onclick="printReport()">
+                <span>Print / PDF</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN APP WORKSPACE (DUAL PANE) -->
+    <div class="app-workspace">
+        
+        <!-- LEFT PANE: WORKSPACE EDITOR -->
+        <aside class="editor-pane">
+            
+            <!-- Editor Sub-Navigation Tabs -->
+            <nav class="editor-tabs">
+                <button class="editor-tab-btn active" data-tab="setup" onclick="switchEditorTab('setup', this)">
+                    1. Setup &amp; Prompt
+                </button>
+                <button class="editor-tab-btn" data-tab="content" onclick="switchEditorTab('content', this)">
+                    2. Content &amp; Chapters
+                </button>
+                <button class="editor-tab-btn" data-tab="media" onclick="switchEditorTab('media', this)">
+                    3. Attendance &amp; Media
+                </button>
+            </nav>
+
+            <!-- Scrollable Editor Panels -->
+            <div class="editor-content-area">
+                
+                <!-- TAB 1: SETUP & PROMPT -->
+                <div id="tabPanelSetup" class="editor-tab-panel active">
+                    <!-- API Key Card -->
+                    <div class="ui-card">
+                        <div class="ui-card-header">
+                            <span class="ui-card-title">Groq Authentication</span>
+                        </div>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <input type="password" id="apiKey" placeholder="Enter your Groq API Key">
+                        </div>
+                    </div>
+
+                    <!-- Event Prompt Inputs -->
+                    <div id="eventInputs" class="ui-card">
+                        <div class="ui-card-header">
+                            <span class="ui-card-title">Event Configuration</span>
+                        </div>
+                        <!-- Event Category Toggle -->
+                        <div class="category-group">
+                            <label>Event Category</label>
+                            <div class="toggle-row">
+                                <button class="toggle-btn active" data-cat="technical" onclick="selectCategory(this)">Technical</button>
+                                <button class="toggle-btn" data-cat="cultural" onclick="selectCategory(this)">Cultural</button>
+                                <button class="toggle-btn" data-cat="sports" onclick="selectCategory(this)">Sports</button>
+                            </div>
+                            <input type="hidden" id="eventCategory" value="technical">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Event Description Prompt</label>
+                            <textarea id="eventDescription" placeholder="Describe the event in detail: name, date, organizers, flow, speakers, key highlights..." style="min-height: 120px;"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Project Prompt Inputs -->
+                    <div id="projectInputs" class="ui-card hidden">
+                        <div class="ui-card-header">
+                            <span class="ui-card-title">Project Configuration</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Project Description Prompt</label>
+                            <textarea id="projectDescription" placeholder="Describe your project: title, objectives, methodology, system design, results..." style="min-height: 140px;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Student Details (CSV: Name, RegNo, RollNo)</label>
+                            <textarea id="studentDetails" placeholder="Student A, PCE22CA001, 101&#10;Student B, PCE22CA002, 102"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button class="btn-generate" id="genBtn" onclick="generateAll()">
+                        <span>⚡ Generate Full Report</span>
+                    </button>
+                </div>
+
+                <!-- TAB 2: CONTENT & CHAPTERS -->
+                <div id="tabPanelContent" class="editor-tab-panel">
+                    <div class="ui-card">
+                        <div class="ui-card-header">
+                            <span class="ui-card-title">Generated Section Editor</span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+                            Fine-tune or edit the generated fields below. Changes are saved automatically.
+                        </p>
+                    </div>
+
+                    <!-- Event Editable Fields -->
+                    <div id="eventEditFields" class="ui-card">
+                        <div class="form-group"><label>Event Name</label><input type="text" id="event_name"></div>
+                        <div class="form-group"><label>Date</label><input type="text" id="event_date"></div>
+                        <div class="form-group"><label>Duration</label><input type="text" id="event_duration"></div>
+                        <div class="form-group"><label>Activity Type</label><input type="text" id="event_type"></div>
+                        <div class="form-group"><label>Organized By</label><input type="text" id="organized_by"></div>
+                        <div class="form-group"><label>Coordinators</label><textarea id="coordinators"></textarea></div>
+                        <div class="form-group"><label>Introduction</label><textarea id="introduction"></textarea></div>
+                        <div class="form-group"><label>Event Details</label><textarea id="details_of_the_event"></textarea></div>
+                        <div class="form-group"><label>Event Description</label><textarea id="description_of_the_event"></textarea></div>
+                        <div class="form-group"><label>Beneficiaries</label><input type="text" id="beneficiaries"></div>
+                        <div class="form-group"><label>Session Overview</label><textarea id="session_overview"></textarea></div>
+                        <div class="form-group"><label>Conclusion</label><textarea id="conclusion"></textarea></div>
+                    </div>
+
+                    <!-- Project Editable Fields -->
+                    <div id="projectEditFields" class="ui-card hidden">
+                        <div class="form-group"><label>Project Title</label><input type="text" id="proj_title"></div>
+                        <div class="form-group"><label>Project Type</label><input type="text" id="proj_type"></div>
+                        <div class="form-group"><label>Branch</label><input type="text" id="proj_branch"></div>
+                        <div class="form-group"><label>Department Name</label><input type="text" id="proj_dep_name"></div>
+                        <div class="form-group"><label>Session</label><input type="text" id="proj_session"></div>
+                        <div class="form-group"><label>Supervisor Name</label><input type="text" id="proj_prof"></div>
+                        <div class="form-group"><label>Supervisor Designation</label><input type="text" id="proj_desig"></div>
+                        <div class="form-group"><label>Abstract Title</label><input type="text" id="proj_abs_title"></div>
+                        <div class="form-group"><label>Abstract Content</label><textarea id="proj_abs_content"></textarea></div>
+                        <div class="form-group"><label>Keywords</label><input type="text" id="proj_keywords"></div>
+                        <div class="form-group"><label>Chapter 1 Title</label><input type="text" id="ch1_title"></div>
+                        <div class="form-group"><label>Chapter 1 Content</label><textarea id="ch1_content"></textarea></div>
+                        <div class="form-group"><label>Chapter 2 Title</label><input type="text" id="ch2_title"></div>
+                        <div class="form-group"><label>Chapter 2 Content</label><textarea id="ch2_content"></textarea></div>
+                        <div class="form-group"><label>Chapter 3 Title</label><input type="text" id="ch3_title"></div>
+                        <div class="form-group"><label>Chapter 3 Content</label><textarea id="ch3_content"></textarea></div>
+                        <div class="form-group"><label>Chapter 4 Title</label><input type="text" id="ch4_title"></div>
+                        <div class="form-group"><label>Chapter 4 Content</label><textarea id="ch4_content"></textarea></div>
+                        <div class="form-group"><label>Chapter 5 Title</label><input type="text" id="ch5_title"></div>
+                        <div class="form-group"><label>Chapter 5 Content</label><textarea id="ch5_content"></textarea></div>
+                        <div class="form-group"><label>Chapter 6 Title</label><input type="text" id="ch6_title"></div>
+                        <div class="form-group"><label>Chapter 6 Content</label><textarea id="ch6_content"></textarea></div>
+                        <div class="form-group"><label>References (one per line)</label><textarea id="proj_refs" placeholder="[1] Author Name, Title..."></textarea></div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: ATTENDANCE & MEDIA -->
+                <div id="tabPanelMedia" class="editor-tab-panel">
+                    <div id="eventAttendance" class="ui-card">
+                        <div class="ui-card-header">
+                            <span class="ui-card-title">Event Media &amp; Log</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Participants List (CSV: ID, Name) — Optional</label>
+                            <textarea id="participantsLog" placeholder="PCE23AD007, Anuj Sharma&#10;PCE23AD010, Aryan..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Event Image Upload</label>
+                            <input type="file" accept="image/*" onchange="encodeImageFileAsURL(this, 'image_placeholder')">
+                            <input type="hidden" id="image_placeholder" value="images/image1.png">
+                        </div>
+                    </div>
+
+                    <div id="projectPlaceholder" class="ui-card hidden">
+                        <div class="ui-card-header">
+                            <span class="ui-card-title">Project Media</span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-muted);">
+                            Project figures and media upload attachments will be available in the upcoming release.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Editor Persistent Bottom Bar -->
+            <div class="editor-bottom-bar">
+                <button class="btn-action" onclick="renderPreview()">
+                    <span>Update Preview</span>
+                </button>
+                <button class="btn-action btn-secondary" onclick="resetForm()" title="Clear form & local storage">
+                    <span>Reset</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- RIGHT PANE: DOCUMENT CANVAS -->
+        <main class="canvas-pane">
+            <!-- Canvas Toolbar -->
+            <div class="canvas-toolbar">
+                <div class="canvas-doc-title">
+                    <span>Document:</span>
+                    <strong id="activeDocTitle">Live Preview</strong>
+                </div>
+
+                <div class="canvas-controls">
+                    <div class="zoom-group">
+                        <button class="zoom-btn" onclick="setZoom(0.5, this)">50%</button>
+                        <button class="zoom-btn active" onclick="setZoom(0.75, this)">75%</button>
+                        <button class="zoom-btn" onclick="setZoom(1.0, this)">100%</button>
+                    </div>
+                    <button class="canvas-btn" onclick="renderPreview()" title="Re-render preview">
+                        ↻ Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Viewport Container -->
+            <div class="canvas-viewport">
+                <div class="canvas-sheet-wrapper" id="canvasSheet">
+                    <iframe id="reportFrame" title="Document Preview"></iframe>
+                </div>
+            </div>
+        </main>
     </div>
-
-    <div class="divider"></div>
-
-    <!-- Action Buttons -->
-    <div class="actions">
-        <button class="btn-action" onclick="renderPreview()">Update Preview</button>
-        <button class="btn-action" onclick="printReport()">Print / PDF</button>
-        <button class="btn-action" onclick="exportToWord()">Export to Word</button>
-    </div>
-
-    <!-- Branding -->
-    <div style="margin-top: 20px; text-align: center; font-size: 12px; color: var(--text-muted);">
-        Made with ❤️ by <a href="https://github.com/just-karrot/automated_report" target="_blank" style="color: var(--text); text-decoration: none; font-weight: 500;">Karan Aswani</a>
-    </div>
-</div>
-
-<div class="preview">
-    <iframe id="reportFrame"></iframe>
-</div>
 
 <script>
     let generatedData = {};
+    const STORAGE_KEY = 'reportstudio_autosave_v2';
+    let autosaveTimer = null;
 
-    const getVal = (id) => document.getElementById(id).value;
-    const setVal = (id, val) => document.getElementById(id).value = val;
+    const getVal = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value : '';
+    };
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined && val !== null) el.value = val;
+    };
+
+    // ── Tab Navigation ──
+    function switchEditorTab(tabName, btn) {
+        document.querySelectorAll('.editor-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.editor-tab-panel').forEach(p => p.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        
+        if (tabName === 'setup') document.getElementById('tabPanelSetup').classList.add('active');
+        if (tabName === 'content') document.getElementById('tabPanelContent').classList.add('active');
+        if (tabName === 'media') document.getElementById('tabPanelMedia').classList.add('active');
+    }
 
     // ── Format Toggle ──
     function selectFormat(btn) {
@@ -528,17 +897,22 @@
         document.getElementById('eventInputs').classList.toggle('hidden', format !== 'event_report');
         document.getElementById('projectInputs').classList.toggle('hidden', format !== 'project_report');
         
-        // Fields inside collapsed sections
+        // Fields inside edit tab
         document.getElementById('eventEditFields').classList.toggle('hidden', format !== 'event_report');
         document.getElementById('projectEditFields').classList.toggle('hidden', format !== 'project_report');
         document.getElementById('eventAttendance').classList.toggle('hidden', format !== 'event_report');
         document.getElementById('projectPlaceholder').classList.toggle('hidden', format !== 'project_report');
         
+        updateDocTitle();
+        triggerAutosave();
+
         // Clear preview on format switch
         const iframe = document.getElementById('reportFrame');
-        iframe.contentWindow.document.open();
-        iframe.contentWindow.document.write('');
-        iframe.contentWindow.document.close();
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.document.open();
+            iframe.contentWindow.document.write('');
+            iframe.contentWindow.document.close();
+        }
     }
 
     // ── Category Toggle ──
@@ -546,15 +920,33 @@
         document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         setVal('eventCategory', btn.dataset.cat);
+        triggerAutosave();
     }
 
-    // ── Collapse Sections ──
+    // ── Legacy collapse compatibility ──
     function toggleSection(header) {
         header.classList.toggle('open');
         const body = header.nextElementSibling;
-        if (body.classList.contains('collapse-body')) {
+        if (body && body.classList.contains('collapse-body')) {
             body.classList.toggle('open');
         }
+    }
+
+    // ── Canvas Zoom ──
+    function setZoom(scale, btn) {
+        document.querySelectorAll('.zoom-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        const sheet = document.getElementById('canvasSheet');
+        if (sheet) {
+            sheet.style.transform = `scale(${scale})`;
+        }
+    }
+
+    function updateDocTitle() {
+        const titleEl = document.getElementById('activeDocTitle');
+        const format = getVal('reportFormat');
+        const name = format === 'event_report' ? (getVal('event_name') || 'Event Report') : (getVal('proj_title') || 'Project Report');
+        if (titleEl) titleEl.innerText = name;
     }
 
     // ── Generate ──
@@ -565,10 +957,10 @@
         const btn = document.getElementById('genBtn');
         
         if (!apiKey) { alert('Please enter an API Key first.'); return; }
-        if (!desc) { alert('Please enter a description.'); return; }
+        if (!desc) { alert('Please enter a description prompt.'); return; }
 
         btn.disabled = true;
-        btn.innerText = 'GENERATING...';
+        btn.innerHTML = '<span>⏳ Generating Full Report...</span>';
 
         try {
             const res = await fetch('/generate', {
@@ -619,24 +1011,31 @@
                 setVal('ch6_content', data.chapter_6_content);
                 setVal('proj_refs', (data.references || []).join('\n'));
                 
-                // Update student textarea for reference
-                const studentsCSV = data.students.map(s => `${s.name}, ${s.reg_no}, ${s.roll_no}`).join('\n');
-                setVal('studentDetails', studentsCSV);
+                if (data.students && Array.isArray(data.students)) {
+                    const studentsCSV = data.students.map(s => `${s.name}, ${s.reg_no}, ${s.roll_no}`).join('\n');
+                    setVal('studentDetails', studentsCSV);
+                }
             }
 
+            updateDocTitle();
+            saveToStorage();
             await renderPreview();
             
+            // Switch automatically to content tab to view generated text
+            const contentTabBtn = document.querySelector('.editor-tab-btn[data-tab="content"]');
+            if (contentTabBtn) switchEditorTab('content', contentTabBtn);
+
         } catch (e) {
             alert('Error: ' + e.message);
         } finally {
             btn.disabled = false;
-            btn.innerText = 'GENERATE FULL REPORT';
+            btn.innerHTML = '<span>⚡ Generate Full Report</span>';
         }
     }
 
     // ── Parsing ──
     function parseCSV(text) {
-        if (!text.trim()) return [];
+        if (!text || !text.trim()) return [];
         return text.split('\n')
             .filter(line => line.includes(','))
             .map(line => {
@@ -644,7 +1043,7 @@
                 if (parts.length === 3) {
                     return { name: parts[0], reg_no: parts[1], roll_no: parts[2] };
                 }
-                return { roll_no: parts[0], name: parts[1] }; // Fallback for old 2-col format
+                return { roll_no: parts[0], name: parts[1] };
             });
     }
 
@@ -713,24 +1112,26 @@
             });
             const html = await res.text();
             const iframe = document.getElementById('reportFrame');
-            iframe.contentWindow.document.open();
-            iframe.contentWindow.document.write(html);
-            iframe.contentWindow.document.close();
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.document.open();
+                iframe.contentWindow.document.write(html);
+                iframe.contentWindow.document.close();
+            }
+            updateDocTitle();
         } catch (e) {
-            console.error(e);
+            console.error('Render error:', e);
         }
     }
 
     // ── Print ──
     function printReport() {
         const iframe = document.getElementById('reportFrame');
+        if (!iframe || !iframe.contentWindow) return;
         const htmlContent = iframe.contentWindow.document.documentElement.outerHTML;
         
-        // Open in new tab to prevent iframe PDF corruption (0B file bug)
         const printWindow = window.open('', '_blank');
-        
         if (!printWindow) {
-            alert('Popup blocked! Please allow popups for this site, or we will try printing directly from the preview.');
+            alert('Popup blocked! Please allow popups to print properly, or we will print directly from frame.');
             iframe.focus();
             iframe.contentWindow.print();
             return;
@@ -740,7 +1141,6 @@
         printWindow.document.write('<!DOCTYPE html>\n' + htmlContent);
         printWindow.document.close();
         
-        // Wait for fonts/images to load then print
         printWindow.setTimeout(() => {
             printWindow.focus();
             printWindow.print();
@@ -752,7 +1152,6 @@
         const format = getVal('reportFormat');
         let data = { report_format: format };
 
-        // Duplicate logic for data gathering (could be refactored)
         if (format === 'event_report') {
             Object.assign(data, {
                 event_name: getVal('event_name'),
@@ -830,15 +1229,163 @@
 
     // ── Image Encode ──
     function encodeImageFileAsURL(element, targetId) {
-        var file = element.files[0];
+        const file = element.files[0];
         if (!file) return;
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.onloadend = function() {
             document.getElementById(targetId).value = reader.result;
+            triggerAutosave();
             renderPreview();
         }
         reader.readAsDataURL(file);
     }
+
+    // ── AUTOSAVE ENGINE (localStorage) ──
+    function setAutosaveStatus(isSaving) {
+        const statusEl = document.getElementById('autosaveStatus');
+        if (!statusEl) return;
+        const dot = statusEl.querySelector('.autosave-dot');
+        const text = statusEl.querySelector('span:last-child');
+        if (isSaving) {
+            if (dot) dot.classList.add('saving');
+            if (text) text.innerText = 'Saving...';
+        } else {
+            if (dot) dot.classList.remove('saving');
+            if (text) text.innerText = 'Saved locally';
+        }
+    }
+
+    function saveToStorage() {
+        try {
+            setAutosaveStatus(true);
+            const state = {
+                apiKey: getVal('apiKey'),
+                reportFormat: getVal('reportFormat'),
+                eventCategory: getVal('eventCategory'),
+                eventDescription: getVal('eventDescription'),
+                projectDescription: getVal('projectDescription'),
+                studentDetails: getVal('studentDetails'),
+                participantsLog: getVal('participantsLog'),
+                image_placeholder: getVal('image_placeholder'),
+                generatedData: generatedData,
+                // Event fields
+                event_name: getVal('event_name'),
+                event_date: getVal('event_date'),
+                event_duration: getVal('event_duration'),
+                event_type: getVal('event_type'),
+                organized_by: getVal('organized_by'),
+                coordinators: getVal('coordinators'),
+                introduction: getVal('introduction'),
+                details_of_the_event: getVal('details_of_the_event'),
+                description_of_the_event: getVal('description_of_the_event'),
+                beneficiaries: getVal('beneficiaries'),
+                session_overview: getVal('session_overview'),
+                conclusion: getVal('conclusion'),
+                // Project fields
+                proj_title: getVal('proj_title'),
+                proj_type: getVal('proj_type'),
+                proj_branch: getVal('proj_branch'),
+                proj_dep_name: getVal('proj_dep_name'),
+                proj_session: getVal('proj_session'),
+                proj_prof: getVal('proj_prof'),
+                proj_desig: getVal('proj_desig'),
+                proj_abs_title: getVal('proj_abs_title'),
+                proj_abs_content: getVal('proj_abs_content'),
+                proj_keywords: getVal('proj_keywords'),
+                ch1_title: getVal('ch1_title'),
+                ch1_content: getVal('ch1_content'),
+                ch2_title: getVal('ch2_title'),
+                ch2_content: getVal('ch2_content'),
+                ch3_title: getVal('ch3_title'),
+                ch3_content: getVal('ch3_content'),
+                ch4_title: getVal('ch4_title'),
+                ch4_content: getVal('ch4_content'),
+                ch5_title: getVal('ch5_title'),
+                ch5_content: getVal('ch5_content'),
+                ch6_title: getVal('ch6_title'),
+                ch6_content: getVal('ch6_content'),
+                proj_refs: getVal('proj_refs')
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            setTimeout(() => setAutosaveStatus(false), 300);
+        } catch (e) {
+            console.error('Autosave error:', e);
+            setAutosaveStatus(false);
+        }
+    }
+
+    function triggerAutosave() {
+        setAutosaveStatus(true);
+        if (autosaveTimer) clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(saveToStorage, 500);
+    }
+
+    function restoreFromStorage() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const state = JSON.parse(raw);
+            if (!state) return;
+
+            if (state.generatedData) generatedData = state.generatedData;
+
+            // Restore all input values
+            Object.keys(state).forEach(key => {
+                if (key !== 'generatedData') setVal(key, state[key]);
+            });
+
+            // Restore Format button UI
+            if (state.reportFormat) {
+                const formatBtn = document.querySelector(`[data-format="${state.reportFormat}"]`);
+                if (formatBtn) {
+                    document.querySelectorAll('[data-format]').forEach(b => b.classList.remove('active'));
+                    formatBtn.classList.add('active');
+                    document.getElementById('eventInputs').classList.toggle('hidden', state.reportFormat !== 'event_report');
+                    document.getElementById('projectInputs').classList.toggle('hidden', state.reportFormat !== 'project_report');
+                    document.getElementById('eventEditFields').classList.toggle('hidden', state.reportFormat !== 'event_report');
+                    document.getElementById('projectEditFields').classList.toggle('hidden', state.reportFormat !== 'project_report');
+                    document.getElementById('eventAttendance').classList.toggle('hidden', state.reportFormat !== 'event_report');
+                    document.getElementById('projectPlaceholder').classList.toggle('hidden', state.reportFormat !== 'project_report');
+                }
+            }
+
+            // Restore Category button UI
+            if (state.eventCategory) {
+                const catBtn = document.querySelector(`[data-cat="${state.eventCategory}"]`);
+                if (catBtn) {
+                    document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
+                    catBtn.classList.add('active');
+                }
+            }
+
+            updateDocTitle();
+
+            // Auto-render preview if content exists
+            const hasContent = state.event_name || state.proj_title || state.eventDescription || state.projectDescription;
+            if (hasContent) {
+                renderPreview();
+            }
+        } catch (e) {
+            console.error('Storage restore error:', e);
+        }
+    }
+
+    function resetForm() {
+        if (!confirm('Are you sure you want to clear the form and browser autosave?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        window.location.reload();
+    }
+
+    // ── Attach Auto-listeners & Init ──
+    document.addEventListener('DOMContentLoaded', () => {
+        restoreFromStorage();
+
+        // Listen for input and change events on all form inputs for debounced autosave
+        document.querySelectorAll('input, textarea, select').forEach(el => {
+            el.addEventListener('input', triggerAutosave);
+            el.addEventListener('change', triggerAutosave);
+        });
+    });
 </script>
 </body>
 </html>
