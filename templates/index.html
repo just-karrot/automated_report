@@ -3,43 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReportStudio — AI-Powered Report Automation</title>
+    <title>ReportStudio — Mistral AI Design</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            /* Swiss Modernism 2.0 Tokens */
-            --bg-app: #F4F4F5;
-            --surface: #FFFFFF;
-            --surface-hover: #FAFAFA;
-            --surface-elevated: #FFFFFF;
-            --canvas-bg: #121214;
-            --dark: #18181B;
-            --accent: #18181B;
-            --accent-hover: #27272A;
-            --border: #E4E4E7;
-            --border-hover: #D4D4D8;
-            --border-focus: #18181B;
-            --text-primary: #18181B;
-            --text-secondary: #52525B;
-            --text-muted: #71717A;
-            --ring: rgba(24, 24, 27, 0.12);
-            --radius-sm: 6px;
-            --radius: 8px;
-            --radius-md: 10px;
-            --header-h: 56px;
-            --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-            --shadow-preview: 0 16px 40px -8px rgba(0, 0, 0, 0.45);
+            /* Mistral AI Design System Color Tokens */
+            --primary: #FA520F;
+            --primary-deep: #CC3A05;
+            --on-primary: #FFFFFF;
+            --sunshine-300: #FFD06A;
+            --sunshine-500: #FFB83E;
+            --sunshine-700: #FFA110;
+            --sunshine-800: #FF8105;
+            --sunshine-900: #FF8A00;
+            --yellow-saturated: #FFD900;
+            --cream: #FFF8E0;
+            --cream-light: #FFFAEB;
+            --cream-deeper: #FFF0C2;
+            --beige-deep: #E6D5A8;
+            --ink: #1F1F1F;
+            --ink-tint: #3D3D3D;
+            --charcoal: #2C2C2C;
+            --slate: #4A4A4A;
+            --steel: #6A6A6A;
+            --stone: #8A8A8A;
+            --muted: #A8A8A8;
+            --hairline: #E5E5E5;
+            --hairline-soft: #EDEDED;
+            --hairline-strong: #C7C7C7;
+            --canvas: #FFFFFF;
+            --surface: #FAFAFA;
+            --surface-cream: #FFF8E0;
+            --surface-cream-soft: #FFFAEB;
+            --surface-code: #1C1C1E;
+            --on-dark: #FFFFFF;
+            --on-dark-muted: #A8A8A8;
+            --on-cream: #1F1F1F;
+            --link: #FA520F;
+
+            /* Radii tokens - Mistral sober/editorial geometry */
+            --rounded-xs: 4px;
+            --rounded-sm: 6px;
+            --rounded-md: 8px;       /* Buttons, inputs */
+            --rounded-lg: 12px;     /* Cards, dominant panel radius */
+            --rounded-xl: 16px;
+            --rounded-full: 9999px; /* Status badges & pills only */
+
+            /* Typography Families */
+            --font-display: 'Newsreader', 'Times New Roman', Georgia, serif;
+            --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+            /* Signatures */
+            --sunset-stripe: linear-gradient(90deg, #FA520F 0%, #FFA110 25%, #FFB83E 50%, #FFD900 75%, #FFF8E0 100%);
+            --shadow-subtle: rgba(0, 0, 0, 0.04) 0px 1px 2px 0px;
+            --shadow-card: rgba(0, 0, 0, 0.04) 0px 4px 12px 0px;
+            --shadow-preview: rgba(0, 0, 0, 0.4) 0px 16px 48px -8px;
+            --header-h: 62px;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-app);
-            color: var(--text-primary);
+            font-family: var(--font-ui);
+            background: var(--surface-cream-soft);
+            color: var(--ink);
             height: 100vh;
             min-height: 100dvh;
             overflow: hidden;
@@ -48,15 +78,24 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* ── SUNSET STRIPE ACCENT (Mistral's Signature Element) ── */
+        .sunset-stripe-bar {
+            height: 4px;
+            background: var(--sunset-stripe);
+            width: 100%;
+            flex-shrink: 0;
+            z-index: 101;
+        }
+
         /* ── TOP APPLICATION BAR ── */
         .app-header {
             height: var(--header-h);
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
+            background: var(--canvas);
+            border-bottom: 1px solid var(--hairline-soft);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 24px;
             z-index: 100;
             flex-shrink: 0;
         }
@@ -65,36 +104,38 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            min-width: 240px;
+            min-width: 250px;
         }
         .brand-logo {
-            width: 30px;
-            height: 30px;
-            background: var(--dark);
-            border-radius: var(--radius-sm);
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: var(--rounded-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow-subtle);
+            box-shadow: 0 2px 6px rgba(250, 82, 15, 0.25);
         }
         .brand-logo span {
-            color: #FFFFFF;
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: -0.02em;
+            color: var(--on-primary);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 1;
         }
         .brand-info h1 {
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-            line-height: 1.2;
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            color: var(--ink);
+            line-height: 1.1;
         }
         .brand-info span {
             font-size: 10px;
-            font-weight: 500;
-            color: var(--text-muted);
-            letter-spacing: 0.06em;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
@@ -106,98 +147,100 @@
         }
         .format-segmented {
             display: flex;
-            background: var(--bg-app);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            background: var(--surface-cream-soft);
+            border: 1px solid var(--beige-deep);
+            border-radius: var(--rounded-md);
             padding: 3px;
             gap: 3px;
         }
         .format-segmented .toggle-btn {
-            padding: 6px 14px;
+            padding: 6px 16px;
             border: none;
-            border-radius: var(--radius-sm);
+            border-radius: var(--rounded-sm);
             background: transparent;
-            color: var(--text-muted);
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
+            color: var(--steel);
+            font-family: var(--font-ui);
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.15s ease-out;
+            transition: all 0.15s ease;
             display: flex;
             align-items: center;
             gap: 6px;
         }
         .format-segmented .toggle-btn.active {
-            background: var(--surface);
-            color: var(--dark);
+            background: var(--canvas);
+            color: var(--ink);
             font-weight: 600;
             box-shadow: var(--shadow-subtle);
+            border: 1px solid rgba(230, 213, 168, 0.4);
         }
         .format-segmented .toggle-btn:hover:not(.active) {
-            color: var(--dark);
-            background: rgba(0, 0, 0, 0.03);
+            color: var(--ink);
+            background: rgba(255, 248, 224, 0.8);
         }
 
         /* Right Actions */
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
-            min-width: 240px;
+            gap: 12px;
+            min-width: 250px;
             justify-content: flex-end;
         }
         .autosave-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500;
-            color: var(--text-muted);
-            padding: 4px 10px;
-            background: var(--bg-app);
-            border-radius: 20px;
-            border: 1px solid var(--border);
+            color: var(--ink);
+            padding: 4px 12px;
+            background: var(--cream-deeper);
+            border-radius: var(--rounded-full);
+            border: 1px solid var(--beige-deep);
         }
         .autosave-dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #10B981;
+            background: var(--primary);
         }
         .autosave-dot.saving {
-            background: #F59E0B;
-            animation: pulse 1s infinite alternate;
+            background: var(--sunshine-700);
+            animation: pulse 0.8s infinite alternate;
         }
         @keyframes pulse {
-            0% { opacity: 0.4; }
+            0% { opacity: 0.3; }
             100% { opacity: 1; }
         }
 
         .btn-header {
-            padding: 7px 12px;
-            font-size: 12px;
+            padding: 8px 16px;
+            font-family: var(--font-ui);
+            font-size: 13px;
             font-weight: 500;
-            color: var(--text-primary);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            color: var(--ink);
+            background: var(--cream);
+            border: 1px solid var(--beige-deep);
+            border-radius: var(--rounded-md);
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.15s ease-out;
+            transition: all 0.15s ease;
         }
         .btn-header:hover {
-            background: var(--bg-app);
-            border-color: var(--border-hover);
+            background: var(--cream-deeper);
+            border-color: #D6C291;
         }
         .btn-header.primary {
-            background: var(--dark);
-            color: #FFFFFF;
-            border-color: var(--dark);
+            background: var(--ink);
+            color: var(--on-dark);
+            border-color: var(--ink);
         }
         .btn-header.primary:hover {
-            background: var(--accent-hover);
+            background: var(--charcoal);
         }
 
         /* ── WORKSPACE BODY (DUAL PANE) ── */
@@ -210,11 +253,11 @@
 
         /* ── LEFT PANE: EDITOR WORKSPACE ── */
         .editor-pane {
-            width: 480px;
-            min-width: 360px;
+            width: 490px;
+            min-width: 380px;
             max-width: 650px;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
+            background: var(--surface-cream-soft);
+            border-right: 1px solid var(--beige-deep);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -225,66 +268,66 @@
         /* Workspace Sub-tabs */
         .editor-tabs {
             display: flex;
-            border-bottom: 1px solid var(--border);
-            background: var(--surface);
+            border-bottom: 1px solid var(--beige-deep);
+            background: var(--canvas);
             padding: 0 16px;
-            gap: 8px;
+            gap: 12px;
             flex-shrink: 0;
         }
         .editor-tab-btn {
-            padding: 12px 10px;
+            padding: 14px 10px;
             background: transparent;
             border: none;
             border-bottom: 2px solid transparent;
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
+            font-family: var(--font-ui);
+            font-size: 13px;
             font-weight: 500;
-            color: var(--text-muted);
+            color: var(--steel);
             cursor: pointer;
-            transition: all 0.15s ease-out;
+            transition: all 0.15s ease;
             display: flex;
             align-items: center;
             gap: 6px;
         }
         .editor-tab-btn:hover {
-            color: var(--text-primary);
+            color: var(--ink);
         }
         .editor-tab-btn.active {
-            color: var(--text-primary);
+            color: var(--primary);
             font-weight: 600;
-            border-bottom-color: var(--dark);
+            border-bottom-color: var(--primary);
         }
 
         /* Tab Content Scroller */
         .editor-content-area {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 22px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
-        .editor-content-area::-webkit-scrollbar { width: 5px; }
-        .editor-content-area::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 4px; }
+        .editor-content-area::-webkit-scrollbar { width: 6px; }
+        .editor-content-area::-webkit-scrollbar-thumb { background: var(--beige-deep); border-radius: 4px; }
 
         .editor-tab-panel {
             display: none;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
         .editor-tab-panel.active {
             display: flex;
         }
 
-        /* Card Containers */
+        /* Mistral Card Containers (12px rounded, cream tinted) */
         .ui-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
+            background: var(--cream);
+            border: 1px solid var(--beige-deep);
+            border-radius: var(--rounded-lg);
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             box-shadow: var(--shadow-card);
         }
         .ui-card-header {
@@ -296,8 +339,8 @@
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
+            letter-spacing: 1px;
+            color: var(--slate);
         }
 
         /* Form elements */
@@ -310,34 +353,31 @@
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
+            letter-spacing: 1px;
+            color: var(--slate);
         }
         input, textarea, select {
-            padding: 9px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 13px;
-            background: var(--surface);
-            color: var(--text-primary);
+            padding: 10px 14px;
+            border: 1px solid var(--hairline-strong);
+            border-radius: var(--rounded-md);
+            font-family: var(--font-ui);
+            font-size: 14px;
+            background: var(--canvas);
+            color: var(--ink);
             outline: none;
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        input:hover, textarea:hover, select:hover {
-            border-color: var(--border-hover);
-        }
         input:focus, textarea:focus, select:focus {
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px var(--ring);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(250, 82, 15, 0.2);
         }
         textarea {
             resize: vertical;
-            min-height: 80px;
-            line-height: 1.5;
+            min-height: 85px;
+            line-height: 1.55;
         }
         input::placeholder, textarea::placeholder {
-            color: #A1A1AA;
+            color: var(--muted);
         }
 
         /* Category toggle */
@@ -348,64 +388,65 @@
         }
         .toggle-row {
             display: flex;
-            background: var(--bg-app);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            background: var(--canvas);
+            border: 1px solid var(--beige-deep);
+            border-radius: var(--rounded-md);
             padding: 3px;
             gap: 3px;
         }
         .toggle-row .toggle-btn {
             flex: 1;
-            padding: 7px 6px;
+            padding: 8px 6px;
             border: none;
-            border-radius: var(--radius-sm);
+            border-radius: var(--rounded-sm);
             background: transparent;
-            color: var(--text-muted);
-            font-family: 'Inter', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
+            color: var(--steel);
+            font-family: var(--font-ui);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
             cursor: pointer;
-            transition: all 0.15s ease-out;
+            transition: all 0.15s ease;
             text-transform: uppercase;
         }
         .toggle-row .toggle-btn.active {
-            background: var(--surface);
-            color: var(--dark);
+            background: var(--ink);
+            color: var(--on-dark);
+            font-weight: 600;
             box-shadow: var(--shadow-subtle);
         }
 
-        /* Primary Generate Button */
+        /* Primary Generate Button (Mistral Orange) */
         .btn-generate {
             width: 100%;
-            padding: 12px 16px;
+            padding: 13px 20px;
             border: none;
-            border-radius: var(--radius);
-            background: var(--dark);
-            color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            border-radius: var(--rounded-md);
+            background: var(--primary);
+            color: var(--on-primary);
+            font-family: var(--font-ui);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
             cursor: pointer;
-            transition: all 0.15s ease-out;
-            box-shadow: var(--shadow-subtle);
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 8px rgba(250, 82, 15, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
         .btn-generate:hover {
-            background: var(--accent-hover);
-            box-shadow: 0 4px 12px rgba(24, 24, 27, 0.15);
+            background: var(--primary-deep);
+            box-shadow: 0 4px 14px rgba(204, 58, 5, 0.4);
             transform: translateY(-1px);
         }
         .btn-generate:active {
             transform: translateY(0);
         }
         .btn-generate:disabled {
-            background: #A1A1AA;
+            background: var(--hairline);
+            color: var(--muted);
             cursor: wait;
             transform: none;
             box-shadow: none;
@@ -413,37 +454,38 @@
 
         /* Bottom Fixed Action Toolbar inside Editor */
         .editor-bottom-bar {
-            padding: 12px 20px;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
+            padding: 14px 22px;
+            background: var(--cream);
+            border-top: 1px solid var(--beige-deep);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 12px;
             flex-shrink: 0;
         }
         .btn-action {
             flex: 1;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
-            color: var(--dark);
-            font-family: 'Inter', sans-serif;
-            font-size: 11px;
+            padding: 9px 14px;
+            border: 1px solid var(--hairline-strong);
+            border-radius: var(--rounded-md);
+            background: var(--canvas);
+            color: var(--ink);
+            font-family: var(--font-ui);
+            font-size: 12px;
             font-weight: 600;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.15s ease-out;
+            transition: all 0.15s ease;
             text-align: center;
         }
         .btn-action:hover {
-            background: var(--bg-app);
-            border-color: var(--border-hover);
+            background: var(--cream-light);
+            border-color: var(--primary);
+            color: var(--primary);
         }
         .btn-action.btn-secondary {
-            color: var(--text-muted);
+            color: var(--steel);
             flex: 0 0 auto;
         }
         .btn-action.btn-secondary:hover {
@@ -452,44 +494,43 @@
             background: #FEF2F2;
         }
 
-        /* Collapsible accordion within Content Tab */
+        /* Collapsible accordion */
         .collapse-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            padding: 10px 12px;
-            background: var(--bg-app);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            padding: 12px 14px;
+            background: var(--cream-light);
+            border: 1px solid var(--beige-deep);
+            border-radius: var(--rounded-md);
             user-select: none;
             transition: all 0.15s ease;
         }
         .collapse-header:hover {
-            background: #EBEBEF;
-            border-color: var(--border-hover);
+            background: var(--cream);
         }
         .collapse-header .arrow {
-            font-size: 10px;
+            font-size: 11px;
             transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            color: var(--text-muted);
+            color: var(--steel);
         }
         .collapse-header.open .arrow { transform: rotate(90deg); }
         .collapse-body {
             display: none;
             flex-direction: column;
-            gap: 12px;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
+            gap: 14px;
+            padding: 16px;
+            border: 1px solid var(--beige-deep);
+            border-radius: var(--rounded-md);
+            background: var(--canvas);
         }
         .collapse-body.open { display: flex; }
 
-        /* ── RIGHT PANE: DOCUMENT CANVAS ── */
+        /* ── RIGHT PANE: DOCUMENT CANVAS (Mistral IDE code surface #1C1C1E) ── */
         .canvas-pane {
             flex: 1;
-            background: var(--canvas-bg);
+            background: var(--surface-code);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -498,69 +539,73 @@
 
         /* Canvas Top Toolbar */
         .canvas-toolbar {
-            height: 44px;
-            background: rgba(24, 24, 27, 0.95);
+            height: 48px;
+            background: rgba(28, 28, 30, 0.96);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 16px;
+            padding: 0 20px;
             backdrop-filter: blur(8px);
             z-index: 10;
             flex-shrink: 0;
         }
         .canvas-doc-title {
-            font-size: 12px;
-            font-weight: 500;
-            color: #A1A1AA;
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--on-dark-muted);
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .canvas-doc-title strong {
-            color: #F4F4F5;
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--cream);
         }
         .canvas-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         .zoom-group {
             display: flex;
             background: rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-sm);
+            border-radius: var(--rounded-sm);
             padding: 2px;
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .zoom-btn {
             background: transparent;
             border: none;
-            color: #A1A1AA;
+            color: var(--on-dark-muted);
             font-size: 11px;
             font-weight: 500;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.15s;
         }
         .zoom-btn.active, .zoom-btn:hover {
             color: #FFFFFF;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.14);
         }
         .canvas-btn {
             background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-sm);
-            color: #E4E4E7;
-            font-size: 11px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--rounded-sm);
+            color: var(--cream);
+            font-size: 12px;
             font-weight: 500;
-            padding: 4px 10px;
+            padding: 5px 12px;
             cursor: pointer;
             transition: all 0.15s;
         }
         .canvas-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.15);
             color: #FFFFFF;
+            border-color: var(--primary);
         }
 
         /* Canvas Viewport */
@@ -574,7 +619,7 @@
             position: relative;
         }
         .canvas-viewport::-webkit-scrollbar { width: 6px; height: 6px; }
-        .canvas-viewport::-webkit-scrollbar-thumb { background: #3F3F46; border-radius: 4px; }
+        .canvas-viewport::-webkit-scrollbar-thumb { background: #333338; border-radius: 4px; }
 
         .canvas-sheet-wrapper {
             transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -585,7 +630,7 @@
             height: 29.7cm;
             background: #FFFFFF;
             border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 3px;
+            border-radius: 2px;
             box-shadow: var(--shadow-preview);
             display: block;
         }
@@ -605,7 +650,7 @@
                 max-width: 100%;
                 resize: none;
                 border-right: none;
-                border-bottom: 1px solid var(--border);
+                border-bottom: 1px solid var(--beige-deep);
                 height: auto;
             }
             .canvas-pane {
@@ -621,13 +666,16 @@
 </head>
 <body>
 
+    <!-- SIGNATURE SUNSET STRIPE ACCENT -->
+    <div class="sunset-stripe-bar"></div>
+
     <!-- TOP APPLICATION BAR -->
     <header class="app-header">
         <div class="header-brand">
-            <div class="brand-logo"><span>R</span></div>
+            <div class="brand-logo"><span>M</span></div>
             <div class="brand-info">
                 <h1>ReportStudio</h1>
-                <span>AI-Powered Generator</span>
+                <span>Frontier Reporting</span>
             </div>
         </div>
 
@@ -647,7 +695,7 @@
         <div class="header-actions">
             <div class="autosave-pill" id="autosaveStatus">
                 <span class="autosave-dot"></span>
-                <span>Saved locally</span>
+                <span>Saved to storage</span>
             </div>
             <button class="btn-header" onclick="exportToWord()">
                 <span>Export Word</span>
@@ -730,9 +778,9 @@
                         </div>
                     </div>
 
-                    <!-- Generate Button -->
+                    <!-- Generate Button (Mistral Orange) -->
                     <button class="btn-generate" id="genBtn" onclick="generateAll()">
-                        <span>⚡ Generate Full Report</span>
+                        <span>Generate Full Report</span>
                     </button>
                 </div>
 
@@ -740,10 +788,10 @@
                 <div id="tabPanelContent" class="editor-tab-panel">
                     <div class="ui-card">
                         <div class="ui-card-header">
-                            <span class="ui-card-title">Generated Section Editor</span>
+                            <span class="ui-card-title">Section Editor</span>
                         </div>
-                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
-                            Fine-tune or edit the generated fields below. Changes are saved automatically.
+                        <p style="font-size: 13px; color: var(--slate); line-height: 1.55;">
+                            Refine or edit the generated fields below. All modifications are automatically preserved in browser storage.
                         </p>
                     </div>
 
@@ -795,7 +843,7 @@
                 <div id="tabPanelMedia" class="editor-tab-panel">
                     <div id="eventAttendance" class="ui-card">
                         <div class="ui-card-header">
-                            <span class="ui-card-title">Event Media &amp; Log</span>
+                            <span class="ui-card-title">Attendance &amp; Image</span>
                         </div>
                         <div class="form-group">
                             <label>Participants List (CSV: ID, Name) — Optional</label>
@@ -810,10 +858,10 @@
 
                     <div id="projectPlaceholder" class="ui-card hidden">
                         <div class="ui-card-header">
-                            <span class="ui-card-title">Project Media</span>
+                            <span class="ui-card-title">Project Media Attachments</span>
                         </div>
-                        <p style="font-size: 12px; color: var(--text-muted);">
-                            Project figures and media upload attachments will be available in the upcoming release.
+                        <p style="font-size: 13px; color: var(--slate); line-height: 1.55;">
+                            Figure uploads and schematic attachments will be available in the upcoming release.
                         </p>
                     </div>
                 </div>
@@ -831,7 +879,7 @@
             </div>
         </aside>
 
-        <!-- RIGHT PANE: DOCUMENT CANVAS -->
+        <!-- RIGHT PANE: DOCUMENT CANVAS (Mistral IDE code surface #1C1C1E) -->
         <main class="canvas-pane">
             <!-- Canvas Toolbar -->
             <div class="canvas-toolbar">
@@ -960,7 +1008,7 @@
         if (!desc) { alert('Please enter a description prompt.'); return; }
 
         btn.disabled = true;
-        btn.innerHTML = '<span>⏳ Generating Full Report...</span>';
+        btn.innerHTML = '<span>Generating Full Report...</span>';
 
         try {
             const res = await fetch('/generate', {
@@ -1029,7 +1077,7 @@
             alert('Error: ' + e.message);
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<span>⚡ Generate Full Report</span>';
+            btn.innerHTML = '<span>Generate Full Report</span>';
         }
     }
 
@@ -1251,7 +1299,7 @@
             if (text) text.innerText = 'Saving...';
         } else {
             if (dot) dot.classList.remove('saving');
-            if (text) text.innerText = 'Saved locally';
+            if (text) text.innerText = 'Saved to storage';
         }
     }
 
