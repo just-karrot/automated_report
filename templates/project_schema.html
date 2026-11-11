@@ -12,7 +12,6 @@
             line-height: 1.5;
             margin: 0 auto;
             padding: 2.54cm; /* ISO A4 standard 1-inch margins */
-            padding-bottom: 4cm; /* Space for footer in web preview */
             max-width: 21cm; 
             background: #fff;
             box-sizing: border-box;
@@ -32,14 +31,6 @@
             }
             .page-break {
                 page-break-before: always;
-            }
-            .recurring-footer {
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                margin: 0px !important;
-                background-color: transparent !important;
-                border-top: none !important;
             }
         }
         .page-break {
@@ -148,35 +139,9 @@
             margin-bottom: 8pt;
         }
 
-        /* Recurring Footer Styles */
-        .recurring-footer {
-            position: fixed;
-            bottom: 0;
-            margin: 0px;
-            left: 2.54cm;
-            font-size: 10pt;
-            text-align: left;
-            color: #333;
-            z-index: 1000;
-            background-color: transparent;
-        }
-
-        .footer-mask {
-            position: absolute;
-            bottom: -3cm;
-            right: -3cm;
-            height: 4cm;
-            background: white;
-            z-index: 100;
-        }
     </style>
 </head>
 <body>
-
-    <!-- Recurring Footer -->
-    <div class="recurring-footer">
-        <i>Department of {{ dep_name | default('Advance Computing') }}, Poornima College of Engineering</i>
-    </div>
 
     <!-- COVER PAGE -->
     <div class="cover-page-container">
@@ -207,7 +172,6 @@
         <div class="font-bold" style="font-size: 16pt;">Poornima College of Engineering</div>
         <div>ISI-6, RIICO Institutional Area, Sitapura, Jaipur – 302022</div>
         </div> <!-- Close text-center -->
-        <div class="footer-mask"></div>
     </div> <!-- Close cover-page-container -->
 
     <!-- DEPARTMENT CERTIFICATE -->
