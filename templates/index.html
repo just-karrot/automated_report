@@ -736,8 +736,19 @@
                             <span class="ui-card-title">Groq Authentication</span>
                         </div>
                         <div class="form-group">
-                            <label>API Key</label>
-                            <input type="password" id="apiKey" placeholder="Enter your Groq API Key">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="margin-bottom: 0;">API Key</label>
+                                <span style="font-size: 11px; color: var(--stone);">Standard Groq key starts with <code>gsk_</code></span>
+                            </div>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <input type="password" id="apiKey" placeholder="Enter your Groq API Key (gsk_...)" style="flex: 1;" autocomplete="off" spellcheck="false">
+                                <button type="button" class="btn btn-secondary" id="toggleApiKeyBtn" onclick="toggleApiKeyVisibility()" style="padding: 7px 11px; font-size: 12px; height: 36px; white-space: nowrap;" title="Show or hide API key">
+                                    Show
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="clearApiKey()" style="padding: 7px 11px; font-size: 12px; height: 36px; white-space: nowrap;" title="Clear API key">
+                                    Clear
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -997,15 +1008,68 @@
         if (titleEl) titleEl.innerText = name;
     }
 
+    // ── API Key Visibility & Clear ──
+    function toggleApiKeyVisibility() {
+        const input = document.getElementById('apiKey');
+        const btn = document.getElementById('toggleApiKeyBtn');
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (btn) btn.innerText = 'Hide';
+        } else {
+            input.type = 'password';
+            if (btn) btn.innerText = 'Show';
+        }
+    }
+
+    function clearApiKey() {
+        const input = document.getElementById('apiKey');
+        if (input) {
+            input.value = '';
+            triggerAutosave();
+            input.focus();
+        }
+    }
+
     // ── Generate ──
     async function generateAll() {
-        const apiKey = getVal('apiKey');
+        const apiKey = (getVal('apiKey') || '').trim();
         const format = getVal('reportFormat');
-        const desc = format === 'event_report' ? getVal('eventDescription') : getVal('projectDescription');
+        const desc = (format === 'event_report' ? getVal('eventDescription') : getVal('projectDescription')) || '';
         const btn = document.getElementById('genBtn');
         
-        if (!apiKey) { alert('Please enter an API Key first.'); return; }
-        if (!desc) { alert('Please enter a description prompt.'); return; }
+        if (!apiKey) {
+            alert('Please enter an API Key first in the Setup tab.');
+            const setupTabBtn = document.querySelector('.editor-tab-btn[data-tab="setup"]');
+            if (setupTabBtn) switchEditorTab('setup', setupTabBtn);
+            const apiKeyInput = document.getElementById('apiKey');
+            if (apiKeyInput) apiKeyInput.focus();
+            return;
+        }
+
+        // Validate ASCII characters (prevents 'ascii' codec can't encode characters in position 739-741 error)
+        if (/[^\x00-\x7F]/.test(apiKey)) {
+            alert('Invalid API Key: The API Key contains non-ASCII characters or invalid text. It looks like prompt text or file contents were pasted into the API key field. Please enter a valid Groq API key.');
+            const setupTabBtn = document.querySelector('.editor-tab-btn[data-tab="setup"]');
+            if (setupTabBtn) switchEditorTab('setup', setupTabBtn);
+            const apiKeyInput = document.getElementById('apiKey');
+            if (apiKeyInput) apiKeyInput.focus();
+            return;
+        }
+
+        if (apiKey.length > 120) {
+            alert('Invalid API Key: The key is unusually long (>120 characters). It appears text or prompt content was accidentally pasted into the API key field. Please check your API key in the Setup tab.');
+            const setupTabBtn = document.querySelector('.editor-tab-btn[data-tab="setup"]');
+            if (setupTabBtn) switchEditorTab('setup', setupTabBtn);
+            const apiKeyInput = document.getElementById('apiKey');
+            if (apiKeyInput) apiKeyInput.focus();
+            return;
+        }
+
+        if (!desc.trim()) {
+            alert('Please enter a description prompt.');
+            return;
+        }
 
         btn.disabled = true;
         btn.innerHTML = '<span>Generating Full Report...</span>';
@@ -1374,6 +1438,14 @@
             if (!raw) return;
             const state = JSON.parse(raw);
             if (!state) return;
+
+            // Guard against corrupted / non-ASCII / pasted prompt text in apiKey
+            if (state.apiKey) {
+                if (/[^\x00-\x7F]/.test(state.apiKey) || state.apiKey.length > 120) {
+                    console.warn('Auto-cleared corrupted or oversized apiKey from localStorage');
+                    state.apiKey = '';
+                }
+            }
 
             if (state.generatedData) generatedData = state.generatedData;
 

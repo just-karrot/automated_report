@@ -4,6 +4,8 @@ import base64
 import json
 import concurrent.futures
 import time
+import unicodedata
+import traceback
 from flask import Flask, render_template, request, jsonify, Response, send_file
 from dotenv import load_dotenv
 from groq import Groq
@@ -18,16 +20,26 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 def generate_full_report():
-    data = request.json
-    api_key = data.get('api_key') or os.getenv('GROQ_API_KEY')
-    description = data.get('description')
+    data = request.json or {}
+    api_key = (data.get('api_key') or os.getenv('GROQ_API_KEY') or '').strip()
+    description = data.get('description', '')
+    if isinstance(description, str):
+        description = unicodedata.normalize('NFKD', description)
     event_category = data.get('event_category', 'technical')
     report_format = data.get('report_format', 'event_report')
 
     if not api_key:
         return jsonify({'error': 'API Key is required'}), 400
+
+    try:
+        api_key.encode('ascii')
+    except UnicodeEncodeError:
+        return jsonify({'error': 'Invalid Groq API Key: The key contains non-ASCII characters or invalid text. Please check your API key in the Setup tab.'}), 400
+
+    if len(api_key) > 120:
+        return jsonify({'error': 'Invalid Groq API Key: The key is unusually long (>120 characters). It appears text or prompt content was accidentally pasted into the API key field. Please enter a valid Groq API key (starts with gsk_).'}), 400
     
-    if not description:
+    if not description or not description.strip():
         return jsonify({'error': 'Event description is required'}), 400
 
     try:
@@ -208,6 +220,7 @@ def generate_full_report():
             return jsonify(json.loads(response.choices[0].message.content or "{}"))
 
     except Exception as e:
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 @app.route('/render', methods=['POST'])
